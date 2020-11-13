@@ -1,0 +1,26 @@
+const links = {
+  login: `/auth/login`,
+  dataPull: `/operator/data/pull`,
+  logout: `/operator/user/logout`,
+  listTicket: `/operator/service/list/ticket`,
+  workplaceActive: `/operator/workplace/activate`,
+  workplaceList: `/operator/user/workplace/list`,
+  branchList: `/operator/user/branch/list`,
+  ticketRegister:  `/operator/ticket/register`,
+  serviceGet: `/operator/service/get`,
+  ticketCall: `/operator/ticket/call`,
+  ticketStart: `/operator/ticket/start`,
+  ticketFinish: `/operator/ticket/finish`,
+  ticketDelete: `/operator/ticket/delete`,
+  postponedList: `/operator/ticket/list/postponed`,
+  activeList: `/operator/workplace/list/active`,
+  serviceList: `/operator/service/list/internal`,
+  ticketRedirect: `/operator/ticket/redirect`,
+  internalOperationStart: `/operator/internal-operation/start`,
+  internalOperationFinish: `/operator/internal-operation/finish`,
+  postponForWhile: `/operator/ticket/postpone-for-while`,
+  ticketPostpone: `/operator/ticket/postpone`,
+  callPostponed: `/operator/ticket/call/postponed`,
+};
+
+export default links;
