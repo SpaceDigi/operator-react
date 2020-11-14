@@ -226,7 +226,6 @@ class Dashboard extends React.Component {
         this.props.history.push("/");
       })
       .catch((error) => {
-        console.log(error)
         this.props.history.push({
           pathname: "/error",
           state: {
@@ -283,6 +282,26 @@ class Dashboard extends React.Component {
     }
   }
 
+  soundRecord(url, headers, body) {
+    API.post(
+      url,
+      body,
+      headers
+    )
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => {
+        this.props.history.push({
+          pathname: "/error",
+          state: {
+            error: error?.response?.data?.errorMsg,
+            status: error?.response?.data?.code,
+          },
+        });
+      });
+  }
+
   ticketStart() {
     if (!this.state.ticketStart) {
       this.setState({ loading: true, ticketStart: true });
@@ -293,6 +312,13 @@ class Dashboard extends React.Component {
         {}
       )
         .then((res) => {
+          console.log(res.data);
+          const soundRecord = res?.data?.soundRecord;
+
+          if(soundRecord) {
+            this.soundRecord(soundRecord.url, soundRecord.jsonBody, soundRecord.headerList)
+          }
+
           this.setState({
             fieldList: res.data.fieldList,
             serviceTitle: res.data.serviceTitle,
@@ -330,11 +356,6 @@ class Dashboard extends React.Component {
     event.preventDefault();
     if (!this.state.ticketFinish) {
       this.setState({ loading: true, ticketFinish: true });
-      // let data = [];
-      // const formData = event.target.elements;
-      // for (let i = 1; i < formData.length; i++) {
-      //   data.push({ name: formData[i].name, value: formData[i].value });
-      // }
 
       API.post(
         links.ticketFinish,
@@ -348,6 +369,12 @@ class Dashboard extends React.Component {
           
           this.stopTimer();
           localStorage.removeItem(Keys.NUMBER_TICKET);
+          const soundRecord = res?.data?.soundRecord;
+
+          if(soundRecord) {
+            this.soundRecord(soundRecord.url, soundRecord.jsonBody, soundRecord.headerList)
+          }
+
           this.setState({
             fieldList: [],
             dropDownBlock: false,
@@ -378,6 +405,12 @@ class Dashboard extends React.Component {
         .then((res) => {
           this.stopTimer();
           localStorage.removeItem(Keys.NUMBER_TICKET);
+          const soundRecord = res?.data?.soundRecord;
+
+          if(soundRecord) {
+            this.soundRecord(soundRecord.url, soundRecord.jsonBody, soundRecord.headerList)
+          }
+
           this.setState({
             fieldList: [],
             serviceTitle: "Не обрано",
@@ -414,6 +447,11 @@ class Dashboard extends React.Component {
       )
         .then((res) => {
           this.stopTimer();
+          const soundRecord = res?.data?.soundRecord;
+
+          if(soundRecord) {
+            this.soundRecord(soundRecord.url, soundRecord.jsonBody, soundRecord.headerList)
+          }
           this.setState({
             workplaceActiveList: [],
             fieldList: [],
@@ -553,6 +591,11 @@ class Dashboard extends React.Component {
         .then((res) => {
           this.stopTimer();
           localStorage.removeItem(Keys.NUMBER_TICKET);
+          const soundRecord = res?.data?.soundRecord;
+
+          if(soundRecord) {
+            this.soundRecord(soundRecord.url, soundRecord.jsonBody, soundRecord.headerList)
+          }
           this.setState({
             dropDownBlock: false,
             fieldList: [],
