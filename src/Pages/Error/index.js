@@ -5,7 +5,7 @@ import logoBlack from "../../img/logo-black.svg";
 function Error(props) {
   useEffect(() => {
     document.body.className = "fix";
-    return () => document.body.className = "";
+    return () => (document.body.className = "");
   }, []);
 
   return (
@@ -16,12 +16,24 @@ function Error(props) {
           <div className="pop-cell">
             <div className="pop-up" id="add">
               <div className="pop-up-top">
-                <strong>Помилка!</strong>
+                <strong>Помилка, {props?.location?.state?.requestId} !</strong>
                 <img src={logoBlack} alt="logo" />
               </div>
               <div className="form">
-                <p style={{marginBottom: 20}} >{props?.location?.state?.error ? props.location.state.error : props?.location?.state?.status === 500 || props?.location?.state?.status === 502 ? "Проблеми з  сервером!" : "Проблеми з зв'язком!" }</p>
-                <button className="button" onClick={() => props.history.push("/dashboard")}>ОК</button>
+                <p style={{ marginBottom: 20 }}>
+                  {props?.location?.state?.error
+                    ? props.location.state.error
+                    : props?.location?.state?.status === 500 ||
+                      props?.location?.state?.status === 502
+                    ? "Проблеми з  сервером!"
+                    : "Проблеми з зв'язком!"}
+                </p>
+                <button
+                  className="button"
+                  onClick={() => props.history.push("/dashboard")}
+                >
+                  ОК
+                </button>
               </div>
             </div>
           </div>

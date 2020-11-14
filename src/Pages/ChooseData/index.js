@@ -98,7 +98,6 @@ function ChooseData(props) {
         props.history.push("/");
       })
       .catch((error) => {
-        console.log('fsdfsd', error.response.headers['content-type'])
         if (error.response.data.status !== 400) {
           localStorage.clear();
           props.history.push("/");
@@ -108,6 +107,7 @@ function ChooseData(props) {
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
+            requestId: error?.response?.headers['request-id'],
           },
         });
       });

@@ -48,6 +48,7 @@ class Dashboard extends React.Component {
       checkPull: true,
       fieldStatus: null,
       workplaceId: null,
+      soundRecordStatus: false,
     };
 
     this.startTimer = this.startTimer.bind(this);
@@ -231,6 +232,7 @@ class Dashboard extends React.Component {
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
+            requestId: error?.response?.headers['request-id'],
           },
         });
         if (error.response.data.code !== 400) {
@@ -289,16 +291,11 @@ class Dashboard extends React.Component {
       headers
     )
       .then((res) => {
-        console.log(res.data);
+        this.setState({soundRecordStatus: false});
       })
       .catch((error) => {
-        this.props.history.push({
-          pathname: "/error",
-          state: {
-            error: error?.response?.data?.errorMsg,
-            status: error?.response?.data?.code,
-          },
-        });
+        console.log(error);
+        this.setState({soundRecordStatus: true});
       });
   }
 
@@ -703,6 +700,11 @@ class Dashboard extends React.Component {
               </a>
 
               <div className="header-top__right">
+                {this.state.soundRecordStatus && 
+                <div style={{marginTop: 8}}>
+                  <p style={{color: 'red'}}>Проблеми з записом звуку!</p>
+                </div>
+                }
                 {this.state.loading && <div className="loader">Loading...</div>}
                 <div className="header-top__stat">
                   <span className="ico ico-users">
