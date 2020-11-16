@@ -26,7 +26,13 @@ function ChooseData(props) {
   }, []);
 
   const loadBranchList = () => {
-    API.post(links.branchList, { userId: userId }, {})
+    API.post(
+      links.branchList,
+      { userId: userId },
+      {
+        Authorization: localStorage.getItem(Keys.JWT_TOKEN),
+      }
+    )
       .then((res) => {
         setDepartmentsList(res.data.branchList);
         const department = res.data.branchList;
@@ -39,7 +45,10 @@ function ChooseData(props) {
       .catch((error) => {
         props.history.push({
           pathname: "/error",
-          state: { error: error?.response?.data?.errorMsg, status: error?.response?.data?.code  },
+          state: {
+            error: error?.response?.data?.errorMsg,
+            status: error?.response?.data?.code,
+          },
         });
       });
   };
@@ -59,7 +68,10 @@ function ChooseData(props) {
       .catch((error) => {
         props.history.push({
           pathname: "/error",
-          state: { error: error?.response?.data?.errorMsg, status: error?.response?.data?.code  },
+          state: {
+            error: error?.response?.data?.errorMsg,
+            status: error?.response?.data?.code,
+          },
         });
       });
   };
@@ -85,7 +97,10 @@ function ChooseData(props) {
       .catch((error) => {
         props.history.push({
           pathname: "/error",
-          state: { error: error?.response?.data?.errorMsg, status: error?.response?.data?.code  },
+          state: {
+            error: error?.response?.data?.errorMsg,
+            status: error?.response?.data?.code,
+          },
         });
       });
     // props.history.push("/dashboard");
@@ -107,7 +122,7 @@ function ChooseData(props) {
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
-            requestId: error?.response?.headers['request-id'],
+            requestId: error?.response?.headers["request-id"],
           },
         });
       });
