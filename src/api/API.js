@@ -23,25 +23,11 @@ API.interceptors.response.use(
 );
 
 const errorHandler = (error, props) => {
-  // console.log(error.request)
-  // console.log(error.response)
-  // if (error.response === undefined || error.response.status === 403) {
-  //     forceLogout();
-  //     return Promise.reject({...error})
-  // } else {
-  //     return error
-  // }
-  // alert(error.response.data.errorMsg)
-  console.log(error)
   if (error.response.status === 401) {
-    forceLogout();
+    setTimeout(() => {
+      forceLogout();
+    }, 3000);
   }
-  //  else {
-  //   props.history.push({
-  //     pathname: '/error',
-  //     state: { error: error.response.data.errorMsg }
-  //   });
-  // }
 
   return Promise.reject(error);
 };

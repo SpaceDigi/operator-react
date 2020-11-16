@@ -4,6 +4,7 @@ import moment from "moment";
 import logo from "../../img/logo.svg";
 import API from "../../api/API";
 import links from "../../api/links";
+import { connect } from "react-redux";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -58,7 +59,17 @@ class Dashboard extends React.Component {
   pullData() {
     if (this.state.checkPull) {
       this.setState({ checkPull: false });
-      API.post(links.dataPull, { userId: this.state.userId }, {})
+      API.post(
+        links.dataPull,
+        { userId: this.state.userId },
+        {
+          headers: {
+            Authorization: this.props?.token
+              ? this.props.token
+              : localStorage.getItem(Keys.JWT_TOKEN),
+          },
+        }
+      )
         .then((res) => {
           // console.log(res.data);
           this.setState({
@@ -70,8 +81,6 @@ class Dashboard extends React.Component {
             workplace: res.data.workplaceTitle,
             checkPull: true,
           });
-
-          // this.renderTabs(res.data.operatorStatus);
         })
         .catch((error) => {
           this.setState({ checkPull: true });
@@ -96,12 +105,22 @@ class Dashboard extends React.Component {
 
   getPostponedList() {
     this.setState({ loading: true });
-    API.post(links.postponedList, { userId: this.state.userId }, {})
+    API.post(
+      links.postponedList,
+      { userId: this.state.userId },
+      {
+        headers: {
+          Authorization: this.props.token
+            ? this.props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
+      }
+    )
       .then((res) => {
         this.setState({ ticketList: res.data.ticketList, loading: false });
       })
       .catch((error) => {
-        console.log(error.response)
+        console.log(error.response);
         this.props.history.push({
           pathname: "/error",
           state: {
@@ -114,7 +133,17 @@ class Dashboard extends React.Component {
 
   getActiveList() {
     this.setState({ loading: true });
-    API.post(links.activeList, { userId: this.state.userId }, {})
+    API.post(
+      links.activeList,
+      { userId: this.state.userId },
+      {
+        headers: {
+          Authorization: this.props.token
+            ? this.props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
+      }
+    )
       .then((res) => {
         this.setState({
           workplaceActiveList: res.data.workplaceActiveList,
@@ -134,7 +163,17 @@ class Dashboard extends React.Component {
 
   getServiceList() {
     this.setState({ loading: true });
-    API.post(links.serviceList, { userId: this.state.userId }, {})
+    API.post(
+      links.serviceList,
+      { userId: this.state.userId },
+      {
+        headers: {
+          Authorization: this.props.token
+            ? this.props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
+      }
+    )
       .then((res) => {
         this.setState({ serviceList: res.data.serviceList, loading: false });
       })
@@ -152,7 +191,17 @@ class Dashboard extends React.Component {
 
   renderReconect() {
     this.setState({ loading: true });
-    API.post(links.dataPull, { userId: this.state.userId }, {})
+    API.post(
+      links.dataPull,
+      { userId: this.state.userId },
+      {
+        headers: {
+          Authorization: this.props.token
+            ? this.props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
+      }
+    )
       .then((res) => {
         // console.log(res.data);
         this.setState({
@@ -221,7 +270,17 @@ class Dashboard extends React.Component {
   };
 
   logout() {
-    API.post(links.logout, { userId: this.state.userId }, {})
+    API.post(
+      links.logout,
+      { userId: this.state.userId },
+      {
+        headers: {
+          Authorization: this.props.token
+            ? this.props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
+      }
+    )
       .then((res) => {
         localStorage.clear();
         this.props.history.push("/");
@@ -232,7 +291,7 @@ class Dashboard extends React.Component {
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
-            requestId: error?.response?.headers['request-id'],
+            requestId: error?.response?.headers["request-id"],
           },
         });
         if (error.response.data.code !== 400) {
@@ -256,7 +315,17 @@ class Dashboard extends React.Component {
   callTicket() {
     if (!this.state.callTicket) {
       this.setState({ loading: true, callTicket: true });
-      API.post(links.ticketCall, { userId: this.state.userId }, {})
+      API.post(
+        links.ticketCall,
+        { userId: this.state.userId },
+        {
+          headers: {
+            Authorization: this.props.token
+              ? this.props.token
+              : localStorage.getItem(Keys.JWT_TOKEN),
+          },
+        }
+      )
         .then((res) => {
           localStorage.setItem(Keys.NUMBER_TICKET, res.data.key);
           this.setState({
@@ -285,17 +354,13 @@ class Dashboard extends React.Component {
   }
 
   soundRecord(url, headers, body) {
-    API.post(
-      url,
-      body,
-      headers
-    )
+    API.post(url, body, headers)
       .then((res) => {
-        this.setState({soundRecordStatus: false});
+        this.setState({ soundRecordStatus: false });
       })
       .catch((error) => {
         console.log(error);
-        this.setState({soundRecordStatus: true});
+        this.setState({ soundRecordStatus: true });
       });
   }
 
@@ -306,14 +371,24 @@ class Dashboard extends React.Component {
       API.post(
         links.ticketStart,
         { userId: this.state.userId, ticketId: this.state.ticketId },
-        {}
+        {
+          headers: {
+            Authorization: this.props.token
+              ? this.props.token
+              : localStorage.getItem(Keys.JWT_TOKEN),
+          },
+        }
       )
         .then((res) => {
           console.log(res.data);
           const soundRecord = res?.data?.soundRecord;
 
-          if(soundRecord) {
-            this.soundRecord(soundRecord.url, soundRecord.jsonBody, soundRecord.headerList)
+          if (soundRecord) {
+            this.soundRecord(
+              soundRecord.url,
+              soundRecord.headerList,
+              soundRecord.jsonBody
+            );
           }
 
           this.setState({
@@ -342,7 +417,7 @@ class Dashboard extends React.Component {
   renderForms(event) {
     let data = [];
     const formData = event.target.elements;
-    for (let i = 1; i < formData.length-2; i++) {
+    for (let i = 1; i < formData.length - 2; i++) {
       data.push({ name: formData[i].name, value: formData[i].value });
     }
 
@@ -360,16 +435,25 @@ class Dashboard extends React.Component {
           transactionFiledList: this.renderForms(event),
           userId: this.state.userId,
         },
-        {}
+        {
+          headers: {
+            Authorization: this.props.token
+              ? this.props.token
+              : localStorage.getItem(Keys.JWT_TOKEN),
+          },
+        }
       )
         .then((res) => {
-          
           this.stopTimer();
           localStorage.removeItem(Keys.NUMBER_TICKET);
           const soundRecord = res?.data?.soundRecord;
 
-          if(soundRecord) {
-            this.soundRecord(soundRecord.url, soundRecord.jsonBody, soundRecord.headerList)
+          if (soundRecord) {
+            this.soundRecord(
+              soundRecord.url,
+              soundRecord.headerList,
+              soundRecord.jsonBody
+            );
           }
 
           this.setState({
@@ -398,14 +482,31 @@ class Dashboard extends React.Component {
 
     if (!this.state.ticketDelete) {
       this.setState({ loading: true, ticketDelete: true });
-      API.post(links.ticketDelete, { userId: this.state.userId, transactionFiledList: this.renderForms(event)}, {})
+      API.post(
+        links.ticketDelete,
+        {
+          userId: this.state.userId,
+          transactionFiledList: this.renderForms(event),
+        },
+        {
+          headers: {
+            Authorization: this.props.token
+              ? this.props.token
+              : localStorage.getItem(Keys.JWT_TOKEN),
+          },
+        }
+      )
         .then((res) => {
           this.stopTimer();
           localStorage.removeItem(Keys.NUMBER_TICKET);
           const soundRecord = res?.data?.soundRecord;
 
-          if(soundRecord) {
-            this.soundRecord(soundRecord.url, soundRecord.jsonBody, soundRecord.headerList)
+          if (soundRecord) {
+            this.soundRecord(
+              soundRecord.url,
+              soundRecord.headerList,
+              soundRecord.jsonBody
+            );
           }
 
           this.setState({
@@ -438,16 +539,26 @@ class Dashboard extends React.Component {
         {
           userId: this.state.userId,
           toWorkplaceId: workplaceId,
-          transactionFiledList: this.renderForms(event)
+          transactionFiledList: this.renderForms(event),
         },
-        {}
+        {
+          headers: {
+            Authorization: this.props.token
+              ? this.props.token
+              : localStorage.getItem(Keys.JWT_TOKEN),
+          },
+        }
       )
         .then((res) => {
           this.stopTimer();
           const soundRecord = res?.data?.soundRecord;
 
-          if(soundRecord) {
-            this.soundRecord(soundRecord.url, soundRecord.jsonBody, soundRecord.headerList)
+          if (soundRecord) {
+            this.soundRecord(
+              soundRecord.url,
+              soundRecord.headerList,
+              soundRecord.jsonBody
+            );
           }
           this.setState({
             workplaceActiveList: [],
@@ -479,7 +590,13 @@ class Dashboard extends React.Component {
       API.post(
         links.internalOperationStart,
         { userId: this.state.userId, serviceId: serviceId },
-        {}
+        {
+          headers: {
+            Authorization: this.props.token
+              ? this.props.token
+              : localStorage.getItem(Keys.JWT_TOKEN),
+          },
+        }
       )
         .then((res) => {
           this.setState({
@@ -511,7 +628,13 @@ class Dashboard extends React.Component {
       API.post(
         links.internalOperationFinish,
         { userId: this.state.userId, transactionFiledList: [] },
-        {}
+        {
+          headers: {
+            Authorization: this.props.token
+              ? this.props.token
+              : localStorage.getItem(Keys.JWT_TOKEN),
+          },
+        }
       )
         .then((res) => {
           localStorage.removeItem(Keys.NUMBER_TICKET);
@@ -581,17 +704,27 @@ class Dashboard extends React.Component {
           userId: this.state.userId,
           hours: hours,
           minutes: minutes,
-          transactionFiledList: this.renderForms(event)
+          transactionFiledList: this.renderForms(event),
         },
-        {}
+        {
+          headers: {
+            Authorization: this.props.token
+              ? this.props.token
+              : localStorage.getItem(Keys.JWT_TOKEN),
+          },
+        }
       )
         .then((res) => {
           this.stopTimer();
           localStorage.removeItem(Keys.NUMBER_TICKET);
           const soundRecord = res?.data?.soundRecord;
 
-          if(soundRecord) {
-            this.soundRecord(soundRecord.url, soundRecord.jsonBody, soundRecord.headerList)
+          if (soundRecord) {
+            this.soundRecord(
+              soundRecord.url,
+              soundRecord.headerList,
+              soundRecord.jsonBody
+            );
           }
           this.setState({
             dropDownBlock: false,
@@ -620,7 +753,20 @@ class Dashboard extends React.Component {
 
     if (!this.state.ticketPostpone) {
       this.setState({ loading: true, ticketPostpone: true });
-      API.post(links.ticketPostpone, { userId: this.state.userId, transactionFiledList: this.renderForms(event) }, {})
+      API.post(
+        links.ticketPostpone,
+        {
+          userId: this.state.userId,
+          transactionFiledList: this.renderForms(event),
+        },
+        {
+          headers: {
+            Authorization: this.props.token
+              ? this.props.token
+              : localStorage.getItem(Keys.JWT_TOKEN),
+          },
+        }
+      )
         .then((res) => {
           localStorage.removeItem(Keys.NUMBER_TICKET);
           this.setState({
@@ -651,7 +797,13 @@ class Dashboard extends React.Component {
       API.post(
         links.callPostponed,
         { userId: this.state.userId, ticketId: ticketId },
-        {}
+        {
+          headers: {
+            Authorization: this.props.token
+              ? this.props.token
+              : localStorage.getItem(Keys.JWT_TOKEN),
+          },
+        }
       )
         .then((res) => {
           this.startTimer();
@@ -700,11 +852,11 @@ class Dashboard extends React.Component {
               </a>
 
               <div className="header-top__right">
-                {this.state.soundRecordStatus && 
-                <div style={{marginTop: 8}}>
-                  <p style={{color: 'red'}}>Проблеми з записом звуку!</p>
-                </div>
-                }
+                {this.state.soundRecordStatus && (
+                  <div style={{ marginTop: 8 }}>
+                    <p style={{ color: "red" }}>Проблеми з записом звуку!</p>
+                  </div>
+                )}
                 {this.state.loading && <div className="loader">Loading...</div>}
                 <div className="header-top__stat">
                   <span className="ico ico-users">
@@ -892,7 +1044,9 @@ class Dashboard extends React.Component {
                                   <input
                                     type="text"
                                     value={field.value ? field.value : ""}
-                                    onChange={(text) => this.onChangeField(text, index)}
+                                    onChange={(text) =>
+                                      this.onChangeField(text, index)
+                                    }
                                     name={field.name}
                                     className="input"
                                     placeholder={field.name}
@@ -1222,4 +1376,10 @@ class Dashboard extends React.Component {
   }
 }
 
-export default Dashboard;
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
+
+export default connect(mapStateToProps)(Dashboard);

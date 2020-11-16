@@ -5,6 +5,7 @@ import API from "../../api/API";
 import logoBlack from "../../img/logo-black.svg";
 import BackgroundPage from "../../Components/BackgroundPage";
 import links from "../../api/links";
+import { connect } from "react-redux";
 
 const depTxt = "Відділення";
 const workTxt = "Робоче місце";
@@ -30,7 +31,11 @@ function ChooseData(props) {
       links.branchList,
       { userId: userId },
       {
-        Authorization: localStorage.getItem(Keys.JWT_TOKEN),
+        headers: {
+          Authorization: props.token
+            ? props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
       }
     )
       .then((res) => {
@@ -54,7 +59,17 @@ function ChooseData(props) {
   };
 
   const loadWorkplaceList = (branchId) => {
-    API.post(links.workplaceList, { userId: userId, branchId: branchId }, {})
+    API.post(
+      links.workplaceList,
+      { userId: userId, branchId: branchId },
+      {
+        headers: {
+          Authorization: props.token
+            ? props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
+      }
+    )
       .then((res) => {
         setWorkplaceList(res.data.workplaceList);
         const workPlaces = res.data.workplaceList;
@@ -87,7 +102,13 @@ function ChooseData(props) {
     API.post(
       links.workplaceActive,
       { userId: userId, workplaceId: workplace.id },
-      {}
+      {
+        headers: {
+          Authorization: props.token
+            ? props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
+      }
     )
       .then((res) => {
         props.history.push("/dashboard");
@@ -107,7 +128,17 @@ function ChooseData(props) {
   };
 
   const logout = () => {
-    API.post(links.logout, { userId: userId }, {})
+    API.post(
+      links.logout,
+      { userId: userId },
+      {
+        headers: {
+          Authorization: props.token
+            ? props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
+      }
+    )
       .then((res) => {
         localStorage.clear();
         props.history.push("/");
@@ -183,4 +214,10 @@ function ChooseData(props) {
   );
 }
 
-export default ChooseData;
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
+
+export default connect(mapStateToProps)(ChooseData);

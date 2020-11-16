@@ -4,6 +4,8 @@ import API from "../../api/API";
 import logoBlack from "../../img/logo-black.svg";
 import BackgroundPage from "../../Components/BackgroundPage";
 import links from "../../api/links";
+import { connect } from "react-redux";
+import { authActions } from "../../redux/auth";
 
 function Login(props) {
   const [login, setLogin] = useState("");
@@ -24,14 +26,18 @@ function Login(props) {
     if (!login || !password) return;
     API.post(links.login, { login, password })
       .then((res) => {
+        props.getToken(res.data.Authorization);
         localStorage.setItem(Keys.JWT_TOKEN, res.data.Authorization);
         localStorage.setItem(Keys.USER_ID, res.data.userId);
         if (localStorage.getItem(Keys.JWT_TOKEN)) {
-          window.location = "/choose-data";
+          // window.location = "/choose-data";
+          props.history.push({
+            pathname: "/choose-data",
+            state: { token: res.data.Authorization },
+          });
         }
       })
       .catch((err) => {
-        console.log(err)
         props.history.push({
           pathname: "/error",
           state: { error: err?.response?.data?.errorMsg },
@@ -92,4 +98,18 @@ function Login(props) {
   );
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getToken: (token) => {
+      dispatch(authActions.setToken(token));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

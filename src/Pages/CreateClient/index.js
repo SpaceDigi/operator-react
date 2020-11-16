@@ -5,6 +5,7 @@ import API from "../../api/API";
 import logoBlack from "../../img/logo-black.svg";
 import SelectDropdown from "../../Components/CustomComponents/SelectDropdown";
 import links from "../../api/links";
+import { connect } from "react-redux";
 
 const servTxt = "Оберіть послугу";
 
@@ -26,9 +27,19 @@ function CreateClient(props) {
 
   const loadServiceList = () => {
     setLoading(true);
-    API.post(links.listTicket, { userId: userId }, {})
+    API.post(
+      links.listTicket,
+      { userId: userId },
+      {
+        headers: {
+          Authorization: props.token
+            ? props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
+      }
+    )
       .then((res) => {
-        setLoading(false)
+        setLoading(false);
         setServiceList(res.data.serviceList);
       })
       .catch((err) => {
@@ -41,7 +52,17 @@ function CreateClient(props) {
 
   const getServices = (e) => {
     setLoading(true);
-    API.post(links.serviceGet, { serviceId: e }, {})
+    API.post(
+      links.serviceGet,
+      { serviceId: e },
+      {
+        headers: {
+          Authorization: props.token
+            ? props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
+      }
+    )
       .then((res) => {
         setLoading(false);
         setServiceFieldList(res.data.serviceFieldList);
@@ -75,7 +96,13 @@ function CreateClient(props) {
         ticketFieldList: data,
         userId: Number(userId),
       },
-      {}
+      {
+        headers: {
+          Authorization: props.token
+            ? props.token
+            : localStorage.getItem(Keys.JWT_TOKEN),
+        },
+      }
     )
       .then((res) => {
         setLoading(false);
@@ -102,7 +129,7 @@ function CreateClient(props) {
                 <img src={logoBlack} alt="logo" />
               </div>
               <form onSubmit={(event) => handleSubmit(event)} className="form">
-                  <p className="form-title">НОВИЙ КЛІЄНТ</p>
+                <p className="form-title">НОВИЙ КЛІЄНТ</p>
                 <div className="input-block">
                   <SelectDropdown
                     value={service}
@@ -148,4 +175,10 @@ function CreateClient(props) {
   );
 }
 
-export default CreateClient;
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
+
+export default connect(mapStateToProps)(CreateClient);
