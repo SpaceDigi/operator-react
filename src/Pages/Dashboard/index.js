@@ -398,6 +398,7 @@ class Dashboard extends React.Component {
             loading: false,
             callTicket: false,
             ticketDelete: false,
+            ticketFinish: false,
             ticketPostpone: false,
           });
           this.startTimer();
@@ -606,6 +607,7 @@ class Dashboard extends React.Component {
             serviceTitle: res.data.serviceTitle,
             loading: false,
             internalOperationStart: false,
+            ticketFinish: false
           });
           this.startTimer();
         })
