@@ -30,7 +30,6 @@ function Login(props) {
         localStorage.setItem(Keys.JWT_TOKEN, res.data.Authorization);
         localStorage.setItem(Keys.USER_ID, res.data.userId);
         if (localStorage.getItem(Keys.JWT_TOKEN)) {
-          // window.location = "/choose-data";
           props.history.push({
             pathname: "/choose-data",
             state: { token: res.data.Authorization },
