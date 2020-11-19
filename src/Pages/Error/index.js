@@ -16,7 +16,7 @@ function Error(props) {
           <div className="pop-cell">
             <div className="pop-up" id="add">
               <div className="pop-up-top">
-                <strong>Помилка, {props?.location?.state?.requestId} !</strong>
+                <strong>Помилка {props?.location?.state?.requestId} !</strong>
                 <img src={logoBlack} alt="logo" />
               </div>
               <div className="form">
@@ -30,7 +30,11 @@ function Error(props) {
                 </p>
                 <button
                   className="button"
-                  onClick={() => props.history.push("/dashboard")}
+                  onClick={() => {
+                    props?.location?.state?.back
+                      ? props.history.goBack()
+                      : props.history.push("/dashboard");
+                  }}
                 >
                   ОК
                 </button>

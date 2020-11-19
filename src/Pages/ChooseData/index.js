@@ -121,6 +121,7 @@ function ChooseData(props) {
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
+            back: true
           },
         });
       });
