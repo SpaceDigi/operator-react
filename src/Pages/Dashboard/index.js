@@ -771,6 +771,16 @@ class Dashboard extends React.Component {
       )
         .then((res) => {
           localStorage.removeItem(Keys.NUMBER_TICKET);
+          
+          const soundRecord = res?.data?.soundRecord;
+
+          if (soundRecord) {
+            this.soundRecord(
+              soundRecord.url,
+              soundRecord.headerList,
+              soundRecord.jsonBody
+            );
+          }
           this.setState({
             dropDownBlock: false,
             fieldList: [],
