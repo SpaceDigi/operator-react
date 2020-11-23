@@ -5,6 +5,7 @@ export default class Keys {
     static ADMIN_TOKEN = "#Admin token (example: HaiAdminToken)";
     static USER_DATA = "#User data in localStorage for redux parsing (example: HaiUserData)";
     static USER_ID = 0;
+    static TITLE_TICKET =  'Не обрано';
     static DEPARTMENT = 'Відділення';
     static WORKPLACE = 'Місце';
     static NUMBER_TICKET =  'Не обрано';

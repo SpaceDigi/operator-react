@@ -34,7 +34,9 @@ class Dashboard extends React.Component {
       postponedTicketListSize: 0,
       operatorStatus: null,
       dropDownBlock: false,
-      serviceTitle: "Не обрано",
+      serviceTitle: localStorage.getItem(Keys.TITLE_TICKET)
+      ? localStorage.getItem(Keys.TITLE_TICKET)
+      : "Не обрано",
       tab: 0,
       //bed connection
       callTicket: false,
@@ -71,7 +73,7 @@ class Dashboard extends React.Component {
         }
       )
         .then((res) => {
-          // console.log(res.data);
+          console.log(res.data);
           this.setState({
             commonTicketListSize: res.data.commonTicketListSize,
             directTicketListSize: res.data.directTicketListSize,
@@ -209,6 +211,11 @@ class Dashboard extends React.Component {
           loading: false,
         });
         this.checkTimeServer(res.data.currentServerTime);
+
+        if(res.data.operatorStatus === "INTERNAL_TRANSACTION_STARTED") {
+          this.setState({numTicket: 'Не обрано'});
+          this.startTimer();
+        }
 
         if (
           res.data.operatorStatus === "TICKET_IS_CALLED" &&
@@ -600,6 +607,7 @@ class Dashboard extends React.Component {
         }
       )
         .then((res) => {
+          localStorage.setItem(Keys.TITLE_TICKET, res.data.serviceTitle);
           this.setState({
             serviceList: [],
             tab: 0,
@@ -640,6 +648,7 @@ class Dashboard extends React.Component {
       )
         .then((res) => {
           localStorage.removeItem(Keys.NUMBER_TICKET);
+          localStorage.removeItem(Keys.TITLE_TICKET);
           this.setState({
             fieldList: [],
             serviceTitle: "Не обрано",
@@ -1295,8 +1304,10 @@ class Dashboard extends React.Component {
                                 <span>{service.lengthInMinutes} хвилин</span>
                               </p>
                               <button
-                                onClick={() =>
-                                  this.internalOperationStart(service.id)
+                                onClick={() => {
+                                  localStorage.setItem(Keys.SERVICE_ID, service.id)
+                                  this.internalOperationStart(service.id);
+                                }
                                 }
                                 className="arr arr-right"
                               ></button>
