@@ -35,8 +35,8 @@ class Dashboard extends React.Component {
       operatorStatus: null,
       dropDownBlock: false,
       serviceTitle: localStorage.getItem(Keys.TITLE_TICKET)
-      ? localStorage.getItem(Keys.TITLE_TICKET)
-      : "Не обрано",
+        ? localStorage.getItem(Keys.TITLE_TICKET)
+        : "Не обрано",
       tab: 0,
       //bed connection
       callTicket: false,
@@ -212,8 +212,8 @@ class Dashboard extends React.Component {
         });
         this.checkTimeServer(res.data.currentServerTime);
 
-        if(res.data.operatorStatus === "INTERNAL_TRANSACTION_STARTED") {
-          this.setState({numTicket: 'Не обрано'});
+        if (res.data.operatorStatus === "INTERNAL_TRANSACTION_STARTED") {
+          this.setState({ numTicket: "Не обрано" });
           this.startTimer();
         }
 
@@ -247,9 +247,9 @@ class Dashboard extends React.Component {
       workplace: localStorage.getItem(Keys.WORKPLACE),
       department: localStorage.getItem(Keys.DEPARTMENT),
     });
-    // this.getPostponedList();
-    // this.getActiveList();
-    // this.getServiceList();
+    this.getPostponedList();
+    this.getActiveList();
+    this.getServiceList();
     this.interval = setInterval(() => {
       this.pullData();
     }, 1000);
@@ -615,7 +615,7 @@ class Dashboard extends React.Component {
             serviceTitle: res.data.serviceTitle,
             loading: false,
             internalOperationStart: false,
-            ticketFinish: false
+            ticketFinish: false,
           });
           this.startTimer();
         })
@@ -780,7 +780,7 @@ class Dashboard extends React.Component {
       )
         .then((res) => {
           localStorage.removeItem(Keys.NUMBER_TICKET);
-          
+
           const soundRecord = res?.data?.soundRecord;
 
           if (soundRecord) {
@@ -1305,10 +1305,12 @@ class Dashboard extends React.Component {
                               </p>
                               <button
                                 onClick={() => {
-                                  localStorage.setItem(Keys.SERVICE_ID, service.id)
+                                  localStorage.setItem(
+                                    Keys.SERVICE_ID,
+                                    service.id
+                                  );
                                   this.internalOperationStart(service.id);
-                                }
-                                }
+                                }}
                                 className="arr arr-right"
                               ></button>
                             </li>

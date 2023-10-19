@@ -1,12 +1,12 @@
-import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
-import "../styles/styles.css";
-import Login from "../Pages/Login";
-import Dashboard from "../Pages/Dashboard";
-import PrivateRouter from "./PrivateRouter";
-import ChooseData from "../Pages/ChooseData";
-import CreateClient from "../Pages/CreateClient";
-import Error from "../Pages/Error";
+import React from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import '../styles/styles.css';
+import Login from '../Pages/Login';
+import Dashboard from '../Pages/Dashboard';
+import PrivateRouter from './PrivateRouter';
+import ChooseData from '../Pages/ChooseData';
+import CreateClient from '../Pages/CreateClient';
+import Error from '../Pages/Error';
 
 const MainRouter = () => (
   <BrowserRouter>

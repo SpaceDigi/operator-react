@@ -18,7 +18,7 @@ function CreateClient(props) {
 
   useEffect(() => {
     document.body.className = "fix";
-    loadServiceList();
+    // loadServiceList();
     return () => {
       document.body.className = document.body.className.replace("fix", "");
     };

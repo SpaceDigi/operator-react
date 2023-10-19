@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import Keys from "../../Constants/helper";
-import SelectDropdown from "../../Components/CustomComponents/SelectDropdown";
-import API from "../../api/API";
-import logoBlack from "../../img/logo-black.svg";
-import BackgroundPage from "../../Components/BackgroundPage";
-import links from "../../api/links";
-import { connect } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import Keys from '../../Constants/helper';
+import SelectDropdown from '../../Components/CustomComponents/SelectDropdown';
+import API from '../../api/API';
+import logoBlack from '../../img/logo-black.svg';
+import BackgroundPage from '../../Components/BackgroundPage';
+import links from '../../api/links';
+import { connect } from 'react-redux';
 
-const depTxt = "Відділення";
-const workTxt = "Робоче місце";
+const depTxt = 'Відділення';
+const workTxt = 'Робоче місце';
 
-function ChooseData(props) {
+export default function ChooseData(props) {
   const [department, setDepartment] = useState({ title: depTxt });
   const [departmentsList, setDepartmentsList] = useState([]);
   const [workplace, setWorkplace] = useState({ title: workTxt });
@@ -18,26 +18,16 @@ function ChooseData(props) {
   const userId = Number(localStorage.getItem(Keys.USER_ID));
 
   useEffect(() => {
-    document.body.className = "fix";
-    loadBranchList();
+    document.body.className = 'fix';
+    // loadBranchList();
     return () => {
-      document.body.className = document.body.className.replace("fix", "");
+      document.body.className = document.body.className.replace('fix', '');
     };
     // eslint-disable-next-line
   }, []);
 
   const loadBranchList = () => {
-    API.post(
-      links.branchList,
-      { userId: userId },
-      {
-        headers: {
-          Authorization: props.token
-            ? props.token
-            : localStorage.getItem(Keys.JWT_TOKEN),
-        },
-      }
-    )
+    API.post(links.branchList, { userId: userId })
       .then((res) => {
         setDepartmentsList(res.data.branchList);
         const department = res.data.branchList;
@@ -49,7 +39,7 @@ function ChooseData(props) {
       })
       .catch((error) => {
         props.history.push({
-          pathname: "/error",
+          pathname: '/error',
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
@@ -77,12 +67,12 @@ function ChooseData(props) {
         if (workPlaces.length === 1) {
           setWorkplace(workPlaces[0]);
         } else {
-          setWorkplace({ title: "Робоче місце" });
+          setWorkplace({ title: 'Робоче місце' });
         }
       })
       .catch((error) => {
         props.history.push({
-          pathname: "/error",
+          pathname: '/error',
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
@@ -111,17 +101,17 @@ function ChooseData(props) {
       }
     )
       .then((res) => {
-        props.history.push("/dashboard");
+        props.history.push('/dashboard');
         localStorage.setItem(Keys.DEPARTMENT, department.title);
         localStorage.setItem(Keys.WORKPLACE, workplace.title);
       })
       .catch((error) => {
         props.history.push({
-          pathname: "/error",
+          pathname: '/error',
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
-            back: true
+            back: true,
           },
         });
       });
@@ -142,19 +132,19 @@ function ChooseData(props) {
     )
       .then((res) => {
         localStorage.clear();
-        props.history.push("/");
+        props.history.push('/');
       })
       .catch((error) => {
         if (error.response.data.status !== 400) {
           localStorage.clear();
-          props.history.push("/");
+          props.history.push('/');
         }
         props.history.push({
-          pathname: "/error",
+          pathname: '/error',
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
-            requestId: error?.response?.headers["request-id"],
+            requestId: error?.response?.headers['request-id'],
           },
         });
       });
@@ -184,7 +174,7 @@ function ChooseData(props) {
                 <div className="input-block">
                   <span className="input-name">Робоче місце</span>
                   <SelectDropdown
-                    disabled={department.title === "Відділення" ? true : false}
+                    disabled={department.title === 'Відділення' ? true : false}
                     value={workplace}
                     setVal={setWorkplace}
                     dataList={workplaceList}
@@ -214,11 +204,3 @@ function ChooseData(props) {
     </React.Fragment>
   );
 }
-
-const mapStateToProps = (state) => {
-  return {
-    token: state.auth.token,
-  };
-};
-
-export default connect(mapStateToProps)(ChooseData);

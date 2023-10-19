@@ -1,45 +1,46 @@
-import React, { useState, useEffect } from "react";
-import Keys from "../../Constants/helper";
-import API from "../../api/API";
-import logoBlack from "../../img/logo-black.svg";
-import BackgroundPage from "../../Components/BackgroundPage";
-import links from "../../api/links";
-import { connect } from "react-redux";
-import { authActions } from "../../redux/auth";
+import React, { useState, useEffect } from 'react';
+import API from '../../api/API';
+import logoBlack from '../../img/logo-black.svg';
+import BackgroundPage from '../../Components/BackgroundPage';
+import links from '../../api/links';
+import { useDispatch, useSelector } from 'react-redux';
+import { config } from '../../config';
+import { setUserId } from '../../redux/auth/authSlice';
 
-function Login(props) {
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
+export default function Login(props) {
+  const [login, setLogin] = useState('');
+  const [password, setPassword] = useState('');
+
+  const dispatch = useDispatch();
+  const USER_ID = useSelector((state) => state.USER_ID);
+  console.log(USER_ID);
 
   useEffect(() => {
-    document.body.className = "fix";
-    if (localStorage.getItem(Keys.JWT_TOKEN)) {
-      props.history.push("/choose-data");
+    document.body.className = 'fix';
+    if (Boolean(USER_ID)) {
+      props.history.push('/choose-data');
     }
     return () => {
-      document.body.className = document.body.className.replace("fix", "");
+      document.body.className = document.body.className.replace('fix', '');
     };
-  }, [props.history]);
+  }, [props.history, USER_ID]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!login || !password) return;
-    API.post(links.login, { login, password })
+    await API.post(links.getEmployeeInfo, {
+      organisationGuid: config.ORG_GUID,
+      userLogin: login,
+      userPassword: password,
+    })
       .then((res) => {
-        props.getToken(res.data.Authorization);
-        localStorage.setItem(Keys.JWT_TOKEN, res.data.Authorization);
-        localStorage.setItem(Keys.USER_ID, res.data.userId);
-        if (localStorage.getItem(Keys.JWT_TOKEN)) {
-          props.history.push({
-            pathname: "/choose-data",
-            state: { token: res.data.Authorization },
-          });
-        }
+        dispatch(setUserId(res.data.data.employeeId));
       })
       .catch((err) => {
+        console.log('aasdsad', err.response);
         props.history.push({
-          pathname: "/error",
-          state: { error: err?.response?.data?.errorMsg },
+          pathname: '/error',
+          state: { error: err?.response?.data?.error?.message },
         });
       });
   };
@@ -96,19 +97,3 @@ function Login(props) {
     </React.Fragment>
   );
 }
-
-const mapStateToProps = (state) => {
-  return {
-    token: state.auth.token,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getToken: (token) => {
-      dispatch(authActions.setToken(token));
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);

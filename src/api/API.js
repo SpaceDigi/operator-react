@@ -1,16 +1,19 @@
-import axios from "axios";
-import Keys from "../Constants/helper";
+import axios from 'axios';
+import Keys from '../Constants/helper';
+import { config } from '../config';
+import { store } from '../redux/store/';
+import { setUserId } from '../redux/auth/authSlice';
 
 let headers = {
-  Accept: "application/json",
-  "Content-Type": "application/json",
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
 };
 
 if (localStorage.getItem(Keys.JWT_TOKEN))
   headers.Authorization = localStorage.getItem(Keys.JWT_TOKEN);
 
 let API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL + "/",
+  baseURL: config.API_URL + '/',
   timeout: 30000,
   headers: headers,
 });
@@ -42,8 +45,7 @@ const requestHandler = (request) => {
 };
 
 export function forceLogout() {
-  localStorage.clear();
-  window.location = "/";
+  store.dispatch(setUserId(null));
 }
 
 export default API;

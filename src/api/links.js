@@ -1,12 +1,14 @@
 const links = {
-  login: `/api/auth/login`,
+  login: `/v1/workplace/login`,
+  branchList: `/v1/auxiliary/getServiceCenters`,
+  workplaceList: `/v1/auxiliary/getAvailableWorkplaces`,
+  getEmployeeInfo: '/v1/workplace/getEmployeeInfo',
+
   dataPull: `/api/operator/data/pull`,
   logout: `/api/operator/user/logout`,
   listTicket: `/api/operator/service/list/ticket`,
   workplaceActive: `/api/operator/workplace/activate`,
-  workplaceList: `/api/operator/user/workplace/list`,
-  branchList: `/api/operator/user/branch/list`,
-  ticketRegister:  `/api/operator/ticket/register`,
+  ticketRegister: `/api/operator/ticket/register`,
   serviceGet: `/api/operator/service/get`,
   ticketCall: `/api/operator/ticket/call`,
   ticketStart: `/api/operator/ticket/start`,
