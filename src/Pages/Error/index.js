@@ -1,12 +1,18 @@
-import React, { useEffect } from "react";
-import BackgroundPage from "../../Components/BackgroundPage";
-import logoBlack from "../../img/logo-black.svg";
+import React, { useEffect } from 'react';
+import BackgroundPage from '../../Components/BackgroundPage';
+import logoBlack from '../../img/logo-black.svg';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, setError } from '../../redux/auth/authSlice';
+import { routes } from '../../api/routes';
 
 function Error(props) {
   useEffect(() => {
-    document.body.className = "fix";
-    return () => (document.body.className = "");
+    document.body.className = 'fix';
+    return () => (document.body.className = '');
   }, []);
+
+  const dispatch = useDispatch();
+  const error = useSelector((state) => state.error);
 
   return (
     <React.Fragment>
@@ -21,19 +27,19 @@ function Error(props) {
               </div>
               <div className="form">
                 <p style={{ marginBottom: 20 }}>
-                  {props?.location?.state?.error
-                    ? props.location.state.error
+                  {error
+                    ? error
                     : props?.location?.state?.status === 500 ||
                       props?.location?.state?.status === 502
-                    ? "Проблеми з  сервером!"
+                    ? 'Проблеми з  сервером!'
                     : "Проблеми з зв'язком!"}
                 </p>
                 <button
                   className="button"
                   onClick={() => {
-                    props?.location?.state?.back
-                      ? props.history.goBack()
-                      : props.history.push("/dashboard");
+                    dispatch(logout());
+                    dispatch(setError(null));
+                    props.history.push(routes.login);
                   }}
                 >
                   ОК

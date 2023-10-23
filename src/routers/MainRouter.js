@@ -7,15 +7,17 @@ import PrivateRouter from './PrivateRouter';
 import ChooseData from '../Pages/ChooseData';
 import CreateClient from '../Pages/CreateClient';
 import Error from '../Pages/Error';
+import { routes } from '../api/routes';
+import PublicRoute from './PublicRouter';
 
 const MainRouter = () => (
   <BrowserRouter>
     <Switch>
-      <Route exact path="/" component={Login} />
-      <Route exact path="/error" component={Error} />
-      <PrivateRouter path="/dashboard" component={Dashboard} />
-      <PrivateRouter path="/choose-data" component={ChooseData} />
-      <PrivateRouter path="/create-client" component={CreateClient} />
+      <Route exact path={routes.error} component={Error} />
+      <Route path={routes.chooseData} component={ChooseData} />
+      <PublicRoute exact path={routes.login} component={Login} />
+      <PrivateRouter path={routes.dashboard} component={Dashboard} />
+      <PrivateRouter path={routes.createClient} component={CreateClient} />
     </Switch>
   </BrowserRouter>
 );

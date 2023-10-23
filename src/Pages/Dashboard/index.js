@@ -1,10 +1,13 @@
-import React from "react";
-import Keys from "../../Constants/helper";
-import moment from "moment";
-import logo from "../../img/logo.svg";
-import API from "../../api/API";
-import links from "../../api/links";
-import { connect } from "react-redux";
+import React from 'react';
+import Keys from '../../Constants/helper';
+import moment from 'moment';
+import logo from '../../img/logo.svg';
+import API from '../../api/API';
+import links from '../../api/links';
+import { connect } from 'react-redux';
+import { logout } from '../../redux/auth/authSlice';
+import { routes } from '../../api/routes';
+import { config } from '../../config';
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -25,7 +28,7 @@ class Dashboard extends React.Component {
       minutes: 0,
       numTicket: localStorage.getItem(Keys.NUMBER_TICKET)
         ? localStorage.getItem(Keys.NUMBER_TICKET)
-        : "Не обрано",
+        : 'Не обрано',
       workplace: Keys.WORKPLACE,
       department: Keys.DEPARTMENT,
       userId: Number(localStorage.getItem(Keys.USER_ID)),
@@ -36,7 +39,7 @@ class Dashboard extends React.Component {
       dropDownBlock: false,
       serviceTitle: localStorage.getItem(Keys.TITLE_TICKET)
         ? localStorage.getItem(Keys.TITLE_TICKET)
-        : "Не обрано",
+        : 'Не обрано',
       tab: 0,
       //bed connection
       callTicket: false,
@@ -87,7 +90,7 @@ class Dashboard extends React.Component {
         .catch((error) => {
           this.setState({ checkPull: true });
           this.props.history.push({
-            pathname: "/error",
+            pathname: '/error',
             state: {
               error: error?.response?.data?.errorMsg,
               status: error?.response?.data?.code,
@@ -99,7 +102,7 @@ class Dashboard extends React.Component {
 
   checkTimeServer(time) {
     let serverTime = Date.now() - moment(time).valueOf();
-    let timeDifference = moment.utc(serverTime).format("H");
+    let timeDifference = moment.utc(serverTime).format('H');
     if (timeDifference > 0) {
       this.setState({ currentServerTime: serverTime });
     }
@@ -124,7 +127,7 @@ class Dashboard extends React.Component {
       .catch((error) => {
         console.log(error.response);
         this.props.history.push({
-          pathname: "/error",
+          pathname: '/error',
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
@@ -154,7 +157,7 @@ class Dashboard extends React.Component {
       })
       .catch((error) => {
         this.props.history.push({
-          pathname: "/error",
+          pathname: '/error',
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
@@ -181,7 +184,7 @@ class Dashboard extends React.Component {
       })
       .catch((error) => {
         this.props.history.push({
-          pathname: "/error",
+          pathname: '/error',
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
@@ -212,27 +215,27 @@ class Dashboard extends React.Component {
         });
         this.checkTimeServer(res.data.currentServerTime);
 
-        if (res.data.operatorStatus === "INTERNAL_TRANSACTION_STARTED") {
-          this.setState({ numTicket: "Не обрано" });
+        if (res.data.operatorStatus === 'INTERNAL_TRANSACTION_STARTED') {
+          this.setState({ numTicket: 'Не обрано' });
           this.startTimer();
         }
 
         if (
-          res.data.operatorStatus === "TICKET_IS_CALLED" &&
+          res.data.operatorStatus === 'TICKET_IS_CALLED' &&
           !this.state.fieldList.length
         ) {
           this.callTicket();
         }
         if (
           !this.state.fieldList.length &&
-          res.data.operatorStatus === "TICKET_IN_PROGRESS"
+          res.data.operatorStatus === 'TICKET_IN_PROGRESS'
         ) {
           this.ticketStart();
         }
       })
       .catch((error) => {
         this.props.history.push({
-          pathname: "/error",
+          pathname: '/error',
           state: {
             error: error?.response?.data?.errorMsg,
             status: error?.response?.data?.code,
@@ -242,17 +245,17 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    this.renderReconect();
-    this.setState({
-      workplace: localStorage.getItem(Keys.WORKPLACE),
-      department: localStorage.getItem(Keys.DEPARTMENT),
-    });
-    this.getPostponedList();
-    this.getActiveList();
-    this.getServiceList();
-    this.interval = setInterval(() => {
-      this.pullData();
-    }, 1000);
+    // this.renderReconect();
+    // this.setState({
+    //   workplace: localStorage.getItem(Keys.WORKPLACE),
+    //   department: localStorage.getItem(Keys.DEPARTMENT),
+    // });
+    // this.getPostponedList();
+    // this.getActiveList();
+    // this.getServiceList();
+    // this.interval = setInterval(() => {
+    //   this.pullData();
+    // }, 1000);
   }
 
   componentWillUnmount() {
@@ -277,35 +280,14 @@ class Dashboard extends React.Component {
   };
 
   logout() {
-    API.post(
-      links.logout,
-      { userId: this.state.userId },
-      {
-        headers: {
-          Authorization: this.props.token
-            ? this.props.token
-            : localStorage.getItem(Keys.JWT_TOKEN),
-        },
-      }
-    )
-      .then((res) => {
-        localStorage.clear();
-        this.props.history.push("/");
-      })
-      .catch((error) => {
-        this.props.history.push({
-          pathname: "/error",
-          state: {
-            error: error?.response?.data?.errorMsg,
-            status: error?.response?.data?.code,
-            requestId: error?.response?.headers["request-id"],
-          },
-        });
-        if (error.response.data.code !== 400) {
-          localStorage.clear();
-          this.props.history.push("/");
-        }
-      });
+    API.post(links.logout, {
+      organisationGuid: config.ORG_GUID,
+      serviceCenterId: this.props.serviceCenterId,
+      workplaceId: this.props.workplaceId,
+    }).then((res) => {
+      this.props.logoutUser();
+      this.props.history.push(routes.login);
+    });
   }
 
   stopTimer() {
@@ -350,7 +332,7 @@ class Dashboard extends React.Component {
         })
         .catch((error) => {
           this.props.history.push({
-            pathname: "/error",
+            pathname: '/error',
             state: {
               error: error?.response?.data?.errorMsg,
               status: error?.response?.data?.code,
@@ -412,7 +394,7 @@ class Dashboard extends React.Component {
         })
         .catch((error) => {
           this.props.history.push({
-            pathname: "/error",
+            pathname: '/error',
             state: {
               error: error?.response?.data?.errorMsg,
               status: error?.response?.data?.code,
@@ -467,15 +449,15 @@ class Dashboard extends React.Component {
           this.setState({
             fieldList: [],
             dropDownBlock: false,
-            serviceTitle: "Не обрано",
-            numTicket: "Не обрано",
+            serviceTitle: 'Не обрано',
+            numTicket: 'Не обрано',
             loading: false,
             ticketStart: false,
           });
         })
         .catch((error) => {
           this.props.history.push({
-            pathname: "/error",
+            pathname: '/error',
             state: {
               error: error?.response?.data?.errorMsg,
               status: error?.response?.data?.code,
@@ -519,15 +501,15 @@ class Dashboard extends React.Component {
 
           this.setState({
             fieldList: [],
-            serviceTitle: "Не обрано",
-            numTicket: "Не обрано",
+            serviceTitle: 'Не обрано',
+            numTicket: 'Не обрано',
             loading: false,
             ticketStart: false,
           });
         })
         .catch((error) => {
           this.props.history.push({
-            pathname: "/error",
+            pathname: '/error',
             state: {
               error: error?.response?.data?.errorMsg,
               status: error?.response?.data?.code,
@@ -571,8 +553,8 @@ class Dashboard extends React.Component {
           this.setState({
             workplaceActiveList: [],
             fieldList: [],
-            serviceTitle: "Не обрано",
-            numTicket: "Не обрано",
+            serviceTitle: 'Не обрано',
+            numTicket: 'Не обрано',
             tab: 0,
             loading: false,
             ticketRedirect: false,
@@ -582,7 +564,7 @@ class Dashboard extends React.Component {
         })
         .catch((error) => {
           this.props.history.push({
-            pathname: "/error",
+            pathname: '/error',
             state: {
               error: error?.response?.data?.errorMsg,
               status: error?.response?.data?.code,
@@ -621,7 +603,7 @@ class Dashboard extends React.Component {
         })
         .catch((error) => {
           this.props.history.push({
-            pathname: "/error",
+            pathname: '/error',
             state: {
               error: error?.response?.data?.errorMsg,
               status: error?.response?.data?.code,
@@ -651,8 +633,8 @@ class Dashboard extends React.Component {
           localStorage.removeItem(Keys.TITLE_TICKET);
           this.setState({
             fieldList: [],
-            serviceTitle: "Не обрано",
-            numTicket: "Не обрано",
+            serviceTitle: 'Не обрано',
+            numTicket: 'Не обрано',
             loading: false,
             internalOperationFinish: false,
           });
@@ -660,7 +642,7 @@ class Dashboard extends React.Component {
         })
         .catch((error) => {
           this.props.history.push({
-            pathname: "/error",
+            pathname: '/error',
             state: {
               error: error?.response?.data?.errorMsg,
               status: error?.response?.data?.code,
@@ -671,7 +653,7 @@ class Dashboard extends React.Component {
   }
 
   renderHours(operation) {
-    if (operation === "increase") {
+    if (operation === 'increase') {
       if (this.state.hours !== 23) {
         this.setState({ hours: this.state.hours + 1 });
       } else {
@@ -687,7 +669,7 @@ class Dashboard extends React.Component {
   }
 
   renderMinutes(operation) {
-    if (operation === "increase") {
+    if (operation === 'increase') {
       if (this.state.minutes !== 59) {
         this.setState({ minutes: this.state.minutes + 1 });
       } else {
@@ -740,8 +722,8 @@ class Dashboard extends React.Component {
           this.setState({
             dropDownBlock: false,
             fieldList: [],
-            serviceTitle: "Не обрано",
-            numTicket: "Не обрано",
+            serviceTitle: 'Не обрано',
+            numTicket: 'Не обрано',
             ticketStart: false,
             loading: false,
             internalOperationFinish: false,
@@ -749,7 +731,7 @@ class Dashboard extends React.Component {
         })
         .catch((error) => {
           this.props.history.push({
-            pathname: "/error",
+            pathname: '/error',
             state: {
               error: error?.response?.data?.errorMsg,
               status: error?.response?.data?.code,
@@ -793,8 +775,8 @@ class Dashboard extends React.Component {
           this.setState({
             dropDownBlock: false,
             fieldList: [],
-            serviceTitle: "Не обрано",
-            numTicket: "Не обрано",
+            serviceTitle: 'Не обрано',
+            numTicket: 'Не обрано',
             loading: false,
             ticketStart: false,
           });
@@ -802,7 +784,7 @@ class Dashboard extends React.Component {
         })
         .catch((error) => {
           this.props.history.push({
-            pathname: "/error",
+            pathname: '/error',
             state: {
               error: error?.response?.data?.errorMsg,
               status: error?.response?.data?.code,
@@ -843,7 +825,7 @@ class Dashboard extends React.Component {
         })
         .catch((error) => {
           this.props.history.push({
-            pathname: "/error",
+            pathname: '/error',
             state: {
               error: error?.response?.data?.errorMsg,
               status: error?.response?.data?.code,
@@ -875,7 +857,7 @@ class Dashboard extends React.Component {
               <div className="header-top__right">
                 {this.state.soundRecordStatus && (
                   <div style={{ marginTop: 8 }}>
-                    <p style={{ color: "red" }}>Проблеми з записом звуку!</p>
+                    <p style={{ color: 'red' }}>Проблеми з записом звуку!</p>
                   </div>
                 )}
                 {this.state.loading && <div className="loader">Loading...</div>}
@@ -891,14 +873,10 @@ class Dashboard extends React.Component {
                   </span>
                 </div>
                 <div className="header-top__work">
-                  {this.state.department} /{" "}
-                  <strong>{this.state.workplace}</strong>
+                  {this.state.department} / <strong>{this.state.workplace}</strong>
                 </div>
                 <div className="header-top__logout">
-                  <button
-                    onClick={() => this.logout()}
-                    className="header-logout"
-                  >
+                  <button onClick={() => this.logout()} className="header-logout">
                     Вийти
                   </button>
                 </div>
@@ -915,14 +893,12 @@ class Dashboard extends React.Component {
               <div className="header-bottom__twice">
                 <p className="client-info">
                   <span>Номер квитка</span>
-                  <strong className="ico ico-ticket">
-                    {this.state.numTicket}
-                  </strong>
+                  <strong className="ico ico-ticket">{this.state.numTicket}</strong>
                 </p>
                 <p className="client-info">
                   <span>Час</span>
                   <strong className="ico ico-clock">
-                    {moment.utc(this.state.time).format("HH:mm:ss")}
+                    {moment.utc(this.state.time).format('HH:mm:ss')}
                   </strong>
                 </p>
               </div>
@@ -939,10 +915,9 @@ class Dashboard extends React.Component {
                       disabled={
                         (this.state.commonTicketListSize < 1 &&
                           this.state.directTicketListSize < 1) ||
-                        this.state.operatorStatus === "TICKET_IS_CALLED" ||
-                        this.state.operatorStatus === "TICKET_IN_PROGRESS" ||
-                        this.state.operatorStatus ===
-                          "INTERNAL_TRANSACTION_STARTED"
+                        this.state.operatorStatus === 'TICKET_IS_CALLED' ||
+                        this.state.operatorStatus === 'TICKET_IN_PROGRESS' ||
+                        this.state.operatorStatus === 'INTERNAL_TRANSACTION_STARTED'
                           ? true
                           : false
                       }
@@ -954,7 +929,7 @@ class Dashboard extends React.Component {
                     </button>
                     <button
                       disabled={
-                        this.state.operatorStatus === "TICKET_IS_CALLED"
+                        this.state.operatorStatus === 'TICKET_IS_CALLED'
                           ? false
                           : true
                       }
@@ -968,14 +943,14 @@ class Dashboard extends React.Component {
                   <div className="col-1-2">
                     <button
                       disabled={
-                        (this.state.operatorStatus === "TICKET_IN_PROGRESS" &&
-                          this.state.operatorStatus === "TICKET_IS_CALLED") ||
-                        this.state.operatorStatus === "NO_TICKET_TO_CALL" ||
-                        this.state.operatorStatus === "TICKET_TO_CALL"
+                        (this.state.operatorStatus === 'TICKET_IN_PROGRESS' &&
+                          this.state.operatorStatus === 'TICKET_IS_CALLED') ||
+                        this.state.operatorStatus === 'NO_TICKET_TO_CALL' ||
+                        this.state.operatorStatus === 'TICKET_TO_CALL'
                           ? false
                           : true
                       }
-                      onClick={() => this.props.history.push("/create-client")}
+                      onClick={() => this.props.history.push('/create-client')}
                       className="btn-dashboard btn btn-add"
                     >
                       <strong>Створити</strong>
@@ -984,9 +959,8 @@ class Dashboard extends React.Component {
 
                     <button
                       disabled={
-                        this.state.operatorStatus === "TICKET_IN_PROGRESS" ||
-                        this.state.operatorStatus ===
-                          "INTERNAL_TRANSACTION_STARTED"
+                        this.state.operatorStatus === 'TICKET_IN_PROGRESS' ||
+                        this.state.operatorStatus === 'INTERNAL_TRANSACTION_STARTED'
                           ? false
                           : true
                       }
@@ -1009,7 +983,7 @@ class Dashboard extends React.Component {
                       </div>
                       <div className="box-content">
                         {this.state.fieldList
-                          .filter((field) => field.entityType === "TICKET")
+                          .filter((field) => field.entityType === 'TICKET')
                           .map((field, index) => {
                             return (
                               <div key={index} className="input-block">
@@ -1029,7 +1003,7 @@ class Dashboard extends React.Component {
                         <form
                           onSubmit={(event) => {
                             this.state.operatorStatus ===
-                            "INTERNAL_TRANSACTION_STARTED"
+                            'INTERNAL_TRANSACTION_STARTED'
                               ? this.internalOperationFinish(event)
                               : this.state.fieldStatus === 1
                               ? this.ticketFinish(event)
@@ -1044,27 +1018,20 @@ class Dashboard extends React.Component {
                                   event
                                 )
                               : this.state.fieldStatus === 5 &&
-                                this.ticketRedirect(
-                                  this.state.workplaceId,
-                                  event
-                                );
+                                this.ticketRedirect(this.state.workplaceId, event);
                           }}
                           id="detailsForm"
                           className="form"
                         >
                           {this.state.fieldList
-                            .filter(
-                              (field) => field.entityType === "TRANSACTION"
-                            )
+                            .filter((field) => field.entityType === 'TRANSACTION')
                             .map((field, index) => {
                               return (
                                 <div key={index} className="input-block">
-                                  <span className="input-name">
-                                    {field.name}
-                                  </span>
+                                  <span className="input-name">{field.name}</span>
                                   <input
                                     type="text"
-                                    value={field.value ? field.value : ""}
+                                    value={field.value ? field.value : ''}
                                     onChange={(text) =>
                                       this.onChangeField(text, index)
                                     }
@@ -1084,9 +1051,8 @@ class Dashboard extends React.Component {
                       <div className="col-1-2">
                         <button
                           disabled={
-                            this.state.operatorStatus ===
-                              "TICKET_IN_PROGRESS" ||
-                            this.state.operatorStatus === "TICKET_IS_CALLED"
+                            this.state.operatorStatus === 'TICKET_IN_PROGRESS' ||
+                            this.state.operatorStatus === 'TICKET_IS_CALLED'
                               ? false
                               : true
                           }
@@ -1102,7 +1068,7 @@ class Dashboard extends React.Component {
                       <div className="col-1-2">
                         <button
                           disabled={
-                            this.state.operatorStatus === "TICKET_IN_PROGRESS"
+                            this.state.operatorStatus === 'TICKET_IN_PROGRESS'
                               ? false
                               : true
                           }
@@ -1125,7 +1091,7 @@ class Dashboard extends React.Component {
                         <div className="input-block">
                           <button
                             disabled={
-                              this.state.operatorStatus === "TICKET_IN_PROGRESS"
+                              this.state.operatorStatus === 'TICKET_IN_PROGRESS'
                                 ? false
                                 : true
                             }
@@ -1143,11 +1109,11 @@ class Dashboard extends React.Component {
                             disabled
                             value={`${
                               this.state.hours < 10
-                                ? "0" + this.state.hours
+                                ? '0' + this.state.hours
                                 : this.state.hours
                             } : ${
                               this.state.minutes < 10
-                                ? "0" + this.state.minutes
+                                ? '0' + this.state.minutes
                                 : this.state.minutes
                             }`}
                           />
@@ -1156,7 +1122,7 @@ class Dashboard extends React.Component {
                               <div className="timer-inputs">
                                 <div className="timer-input">
                                   <button
-                                    onClick={() => this.renderHours("increase")}
+                                    onClick={() => this.renderHours('increase')}
                                     className="increase"
                                   ></button>
                                   <input
@@ -1165,21 +1131,19 @@ class Dashboard extends React.Component {
                                     disabled
                                     value={
                                       this.state.hours < 10
-                                        ? "0" + this.state.hours
+                                        ? '0' + this.state.hours
                                         : this.state.hours
                                     }
                                   />
                                   <button
-                                    onClick={() => this.renderHours("decrease")}
+                                    onClick={() => this.renderHours('decrease')}
                                     className="decrease"
                                   ></button>
                                 </div>
                                 <span>:</span>
                                 <div className="timer-input">
                                   <button
-                                    onClick={() =>
-                                      this.renderMinutes("increase")
-                                    }
+                                    onClick={() => this.renderMinutes('increase')}
                                     className="increase"
                                   ></button>
                                   <input
@@ -1188,14 +1152,12 @@ class Dashboard extends React.Component {
                                     disabled
                                     value={
                                       this.state.minutes < 10
-                                        ? "0" + this.state.minutes
+                                        ? '0' + this.state.minutes
                                         : this.state.minutes
                                     }
                                   />
                                   <button
-                                    onClick={() =>
-                                      this.renderMinutes("decrease")
-                                    }
+                                    onClick={() => this.renderMinutes('decrease')}
                                     className="decrease"
                                   ></button>
                                 </div>
@@ -1209,9 +1171,7 @@ class Dashboard extends React.Component {
                                   //     this.state.minutes
                                   //   )
                                   // }
-                                  onClick={() =>
-                                    this.setState({ fieldStatus: 4 })
-                                  }
+                                  onClick={() => this.setState({ fieldStatus: 4 })}
                                   form="detailsForm"
                                   type="submit"
                                   className="button"
@@ -1238,18 +1198,16 @@ class Dashboard extends React.Component {
               </div>
               <div className="col-1-3">
                 <div className="box">
-                  <ul
-                    className={`${this.state.tab !== 0 ? "tabs" : "tabs-none"}`}
-                  >
+                  <ul className={`${this.state.tab !== 0 ? 'tabs' : 'tabs-none'}`}>
                     <button
-                      className={`${this.state.tab === 1 ? "active" : ""}`}
+                      className={`${this.state.tab === 1 ? 'active' : ''}`}
                       onClick={() => {
                         this.getServiceList();
                         this.setState({ tab: 1 });
                       }}
                       disabled={
-                        this.state.operatorStatus === "NO_TICKET_TO_CALL" ||
-                        this.state.operatorStatus === "TICKET_TO_CALL"
+                        this.state.operatorStatus === 'NO_TICKET_TO_CALL' ||
+                        this.state.operatorStatus === 'TICKET_TO_CALL'
                           ? false
                           : true
                       }
@@ -1257,13 +1215,13 @@ class Dashboard extends React.Component {
                       Задачі
                     </button>
                     <button
-                      className={`${this.state.tab === 2 ? "active" : ""}`}
+                      className={`${this.state.tab === 2 ? 'active' : ''}`}
                       onClick={() => {
                         this.getActiveList();
                         this.setState({ tab: 2 });
                       }}
                       disabled={
-                        this.state.operatorStatus === "TICKET_IN_PROGRESS"
+                        this.state.operatorStatus === 'TICKET_IN_PROGRESS'
                           ? false
                           : true
                       }
@@ -1271,14 +1229,14 @@ class Dashboard extends React.Component {
                       Направити
                     </button>
                     <button
-                      className={`${this.state.tab === 3 ? "active" : ""}`}
+                      className={`${this.state.tab === 3 ? 'active' : ''}`}
                       onClick={() => {
                         this.getPostponedList();
                         this.setState({ tab: 3 });
                       }}
                       disabled={
-                        this.state.operatorStatus === "NO_TICKET_TO_CALL" ||
-                        this.state.operatorStatus === "TICKET_TO_CALL"
+                        this.state.operatorStatus === 'NO_TICKET_TO_CALL' ||
+                        this.state.operatorStatus === 'TICKET_TO_CALL'
                           ? false
                           : true
                       }
@@ -1289,7 +1247,7 @@ class Dashboard extends React.Component {
 
                   <div
                     className={`tab-content  ${
-                      this.state.tab === 1 ? "active" : ""
+                      this.state.tab === 1 ? 'active' : ''
                     }`}
                   >
                     <ul className="tab-list">
@@ -1305,10 +1263,7 @@ class Dashboard extends React.Component {
                               </p>
                               <button
                                 onClick={() => {
-                                  localStorage.setItem(
-                                    Keys.SERVICE_ID,
-                                    service.id
-                                  );
+                                  localStorage.setItem(Keys.SERVICE_ID, service.id);
                                   this.internalOperationStart(service.id);
                                 }}
                                 className="arr arr-right"
@@ -1321,44 +1276,42 @@ class Dashboard extends React.Component {
                   </div>
                   <div
                     className={`tab-content  ${
-                      this.state.tab === 2 ? "active" : ""
+                      this.state.tab === 2 ? 'active' : ''
                     }`}
                   >
                     <ul className="tab-list">
                       {!this.state.workplaceActiveList.length ? (
                         <p>Список порожній</p>
                       ) : (
-                        this.state.workplaceActiveList.map(
-                          (workplace, index) => {
-                            return (
-                              <li key={index}>
-                                <p>
-                                  {workplace.title}
-                                  <span> </span>
-                                </p>
-                                <button
-                                  onClick={() =>
-                                    this.setState({
-                                      fieldStatus: 5,
-                                      workplaceId: workplace.workplaceId,
-                                    })
-                                  }
-                                  form="detailsForm"
-                                  // onClick={() =>
-                                  //   this.ticketRedirect(workplace.workplaceId)
-                                  // }
-                                  className="arr arr-right"
-                                ></button>
-                              </li>
-                            );
-                          }
-                        )
+                        this.state.workplaceActiveList.map((workplace, index) => {
+                          return (
+                            <li key={index}>
+                              <p>
+                                {workplace.title}
+                                <span> </span>
+                              </p>
+                              <button
+                                onClick={() =>
+                                  this.setState({
+                                    fieldStatus: 5,
+                                    workplaceId: workplace.workplaceId,
+                                  })
+                                }
+                                form="detailsForm"
+                                // onClick={() =>
+                                //   this.ticketRedirect(workplace.workplaceId)
+                                // }
+                                className="arr arr-right"
+                              ></button>
+                            </li>
+                          );
+                        })
                       )}
                     </ul>
                   </div>
                   <div
                     className={`tab-content  ${
-                      this.state.tab === 3 ? "active" : ""
+                      this.state.tab === 3 ? 'active' : ''
                     }`}
                   >
                     <ul className="tab-list">
@@ -1403,8 +1356,16 @@ class Dashboard extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    token: state.auth.token,
+    token: 'asd',
+    serviceCenterId: state.serviceCenterId,
+    workplaceId: state.workplaceId,
   };
 };
 
-export default connect(mapStateToProps)(Dashboard);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logoutUser: () => dispatch(logout()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

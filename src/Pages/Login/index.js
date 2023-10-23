@@ -6,6 +6,7 @@ import links from '../../api/links';
 import { useDispatch, useSelector } from 'react-redux';
 import { config } from '../../config';
 import { setUserId } from '../../redux/auth/authSlice';
+import { routes } from '../../api/routes';
 
 export default function Login(props) {
   const [login, setLogin] = useState('');
@@ -13,17 +14,21 @@ export default function Login(props) {
 
   const dispatch = useDispatch();
   const USER_ID = useSelector((state) => state.USER_ID);
+  const serviceCenterId = useSelector((state) => state.serviceCenterId);
+  const workplaceId = useSelector((state) => state.workplaceId);
   console.log(USER_ID);
 
   useEffect(() => {
     document.body.className = 'fix';
-    if (Boolean(USER_ID)) {
-      props.history.push('/choose-data');
+
+    if (USER_ID && serviceCenterId && workplaceId) {
+      props.history.push(routes.dashboard);
     }
+
     return () => {
       document.body.className = document.body.className.replace('fix', '');
     };
-  }, [props.history, USER_ID]);
+  }, [props.history, USER_ID, serviceCenterId, workplaceId]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -32,17 +37,16 @@ export default function Login(props) {
       organisationGuid: config.ORG_GUID,
       userLogin: login,
       userPassword: password,
-    })
-      .then((res) => {
-        dispatch(setUserId(res.data.data.employeeId));
-      })
-      .catch((err) => {
-        console.log('aasdsad', err.response);
-        props.history.push({
-          pathname: '/error',
-          state: { error: err?.response?.data?.error?.message },
-        });
+    }).then((res) => {
+      dispatch(setUserId(res.data.data.employeeId));
+      props.history.push({
+        pathname: routes.chooseData,
+        state: {
+          userLogin: login,
+          userPassword: password,
+        },
       });
+    });
   };
 
   return (

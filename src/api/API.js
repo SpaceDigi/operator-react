@@ -2,7 +2,8 @@ import axios from 'axios';
 import Keys from '../Constants/helper';
 import { config } from '../config';
 import { store } from '../redux/store/';
-import { setUserId } from '../redux/auth/authSlice';
+import { setError, setUserId } from '../redux/auth/authSlice';
+import { routes } from './routes';
 
 let headers = {
   Accept: 'application/json',
@@ -26,6 +27,11 @@ API.interceptors.response.use(
 );
 
 const errorHandler = (error, props) => {
+  const message = error.response?.data?.error?.message || null;
+  store.dispatch(setError(message));
+
+  window.location = routes.error;
+
   if (error.response.status === 401) {
     setTimeout(() => {
       forceLogout();

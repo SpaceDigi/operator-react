@@ -3,9 +3,9 @@ const links = {
   branchList: `/v1/auxiliary/getServiceCenters`,
   workplaceList: `/v1/auxiliary/getAvailableWorkplaces`,
   getEmployeeInfo: '/v1/workplace/getEmployeeInfo',
+  logout: `/v1/workplace/logoff`,
 
   dataPull: `/api/operator/data/pull`,
-  logout: `/api/operator/user/logout`,
   listTicket: `/api/operator/service/list/ticket`,
   workplaceActive: `/api/operator/workplace/activate`,
   ticketRegister: `/api/operator/ticket/register`,
