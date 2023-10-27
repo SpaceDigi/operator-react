@@ -10,13 +10,22 @@ const initialUserState = {
   lastName: null,
   postId: null,
   postName: null,
-  error: null,
+  error: {
+    message: null,
+    code: null,
+  },
 };
 
 const initialState = {
   USER_ID: null,
-  serviceCenterId: null,
-  workplaceId: null,
+  serviceCenter: {
+    id: null,
+    title: null,
+  },
+  workplace: {
+    id: null,
+    title: null,
+  },
   userData: initialUserState,
 };
 
@@ -28,15 +37,27 @@ export const authSlice = createSlice({
     setUserId: (state, action) => {
       state.USER_ID = action.payload;
     },
-    setWorkplaceId: (state, action) => {
-      state.workplaceId = action.payload;
+    setWorkplace: (state, action) => {
+      state.workplace = {
+        id: action.payload.id,
+        title: action.payload.title,
+      };
     },
-    setServiceCenterId: (state, action) => {
-      state.serviceCenterId = action.payload;
+    setServiceCenter: (state, action) => {
+      state.serviceCenter = {
+        id: action.payload.id,
+        title: action.payload.title,
+      };
     },
     logout: (state) => {
-      state.serviceCenterId = null;
-      state.workplaceId = null;
+      state.serviceCenter = {
+        id: null,
+        title: null,
+      };
+      state.workplace = {
+        id: null,
+        title: null,
+      };
       state.USER_ID = null;
       state.userData = initialUserState;
     },
@@ -44,7 +65,7 @@ export const authSlice = createSlice({
       state.userData = { ...action.payload };
     },
     setError: (state, action) => {
-      state.error = action.payload;
+      state.error = { ...action.payload };
     },
   },
 });
@@ -52,8 +73,8 @@ export const authSlice = createSlice({
 export const {
   setUserId,
   setUserData,
-  setServiceCenterId,
-  setWorkplaceId,
+  setServiceCenter,
+  setWorkplace,
   logout,
   setError,
 } = authSlice.actions;

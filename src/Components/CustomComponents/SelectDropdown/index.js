@@ -9,6 +9,8 @@ function SelectDropdown(props) {
   const [dropdown, setDropdown] = useState(false);
   let ref = useRef();
 
+  const { descriptionKey = 'description' } = props;
+
   useEffect(() => {
     if (props.disabled !== undefined && props.disabled !== null) {
       setDisabled(props.disabled);
@@ -47,7 +49,7 @@ function SelectDropdown(props) {
         placeholder={props.placeholder ? props.placeholder : null}
         className={props.error ? 'input' : 'input'}
         type={props.type ? props.type : 'text'}
-        value={props.value ? props.value.description : ''}
+        value={props.value ? props.value[descriptionKey] : ''}
       />
       <span className="arr arr-down"></span>
       {dropdown ? (
@@ -71,7 +73,7 @@ function SelectDropdown(props) {
                       setDropdown(false);
                     }}
                   >
-                    {data.description}
+                    {data[descriptionKey]}
                   </span>
                 );
               })

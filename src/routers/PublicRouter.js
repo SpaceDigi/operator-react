@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 
 const PublicRoute = (props) => {
   const USER_ID = useSelector((state) => state.USER_ID);
-  const workplaceId = useSelector((state) => state.workplaceId);
-  const serviceCenterId = useSelector((state) => state.serviceCenterId);
+  const workplaceId = useSelector((state) => state.workplace.id);
+  const serviceCenterId = useSelector((state) => state.serviceCenter.id);
   if (!USER_ID || !workplaceId || !serviceCenterId) {
     return <Route {...props} />;
   } else {

@@ -27,8 +27,8 @@ function Error(props) {
               </div>
               <div className="form">
                 <p style={{ marginBottom: 20 }}>
-                  {error
-                    ? error
+                  {error.message
+                    ? error.message
                     : props?.location?.state?.status === 500 ||
                       props?.location?.state?.status === 502
                     ? 'Проблеми з  сервером!'
@@ -37,7 +37,9 @@ function Error(props) {
                 <button
                   className="button"
                   onClick={() => {
-                    dispatch(logout());
+                    error.message &&
+                      error.message.includes('не авторизовано') &&
+                      dispatch(logout());
                     dispatch(setError(null));
                     props.history.push(routes.login);
                   }}

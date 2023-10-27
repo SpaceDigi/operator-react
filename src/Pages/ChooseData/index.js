@@ -6,10 +6,10 @@ import BackgroundPage from '../../Components/BackgroundPage';
 import links from '../../api/links';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  setServiceCenterId,
+  setServiceCenter as setSelectedServiceCenter,
   setUserData,
   setUserId,
-  setWorkplaceId,
+  setWorkplace as setSelectedWorkplace,
 } from '../../redux/auth/authSlice';
 import { config } from '../../config';
 import { routes } from '../../api/routes';
@@ -25,8 +25,8 @@ export default function ChooseData(props) {
 
   const dispatch = useDispatch();
   const USER_ID = useSelector((state) => state.USER_ID);
-  const serviceCenterId = useSelector((state) => state.serviceCenterId);
-  const workplaceId = useSelector((state) => state.workplaceId);
+  const serviceCenterId = useSelector((state) => state.serviceCenter.id);
+  const workplaceId = useSelector((state) => state.workplace.id);
   const { userLogin, userPassword } = props.location.state;
 
   useEffect(() => {
@@ -99,8 +99,18 @@ export default function ChooseData(props) {
     }).then((res) => {
       console.log(res.data);
       dispatch(setUserData(res.data.data));
-      dispatch(setWorkplaceId(selectedWorkplaceId));
-      dispatch(setServiceCenterId(selectedServiceCenterId));
+      dispatch(
+        setSelectedWorkplace({
+          id: workplace.workPlaceId,
+          title: workplace.description,
+        })
+      );
+      dispatch(
+        setSelectedServiceCenter({
+          id: department.serviceCenterId,
+          title: department.description,
+        })
+      );
     });
   };
 

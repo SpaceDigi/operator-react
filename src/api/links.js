@@ -2,21 +2,40 @@ const links = {
   login: `/v1/workplace/login`,
   branchList: `/v1/auxiliary/getServiceCenters`,
   workplaceList: `/v1/auxiliary/getAvailableWorkplaces`,
+  getWorkplaceState: '/v1/Auxiliary/GetWorkplaceState',
   getEmployeeInfo: '/v1/workplace/getEmployeeInfo',
   logout: `/v1/workplace/logoff`,
+
+  getJobs: '/v1/auxiliary/getJobs',
+  //analog from old api
+  serviceList: `/api/operator/service/list/internal`,
+
+  getQueueState: '/v1/Auxiliary/GetQueueState',
+
+  callCustomer: '/v1/customers/getCustomer',
+  //analog
+  ticketCall: `/api/operator/ticket/call`,
+
+  getCustomerTypes: '/v1/Auxiliary/GetCustomerTypes',
+  getLanguages: '/v1/Auxiliary/GetLanguages',
+
+  createClient: '/v1/Customers/AddCustomer',
+  deleteClient: '/v1/Customers/DropCustomer',
+
+  suspendJob: '/v1/Jobs/SuspendJob',
+  startJob: '/v1/Jobs/StartJob',
+  completeJob: '/v1/Jobs/CompleteJob',
 
   dataPull: `/api/operator/data/pull`,
   listTicket: `/api/operator/service/list/ticket`,
   workplaceActive: `/api/operator/workplace/activate`,
   ticketRegister: `/api/operator/ticket/register`,
   serviceGet: `/api/operator/service/get`,
-  ticketCall: `/api/operator/ticket/call`,
   ticketStart: `/api/operator/ticket/start`,
   ticketFinish: `/api/operator/ticket/finish`,
   ticketDelete: `/api/operator/ticket/delete`,
   postponedList: `/api/operator/ticket/list/postponed`,
   activeList: `/api/operator/workplace/list/active`,
-  serviceList: `/api/operator/service/list/internal`,
   ticketRedirect: `/api/operator/ticket/redirect`,
   internalOperationStart: `/api/operator/internal-operation/start`,
   internalOperationFinish: `/api/operator/internal-operation/finish`,

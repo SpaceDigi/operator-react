@@ -27,8 +27,9 @@ API.interceptors.response.use(
 );
 
 const errorHandler = (error, props) => {
-  const message = error.response?.data?.error?.message || null;
-  store.dispatch(setError(message));
+  const errorData = error.response?.data?.error || null;
+  console.log(error.response.data.error);
+  store.dispatch(setError(errorData));
 
   window.location = routes.error;
 

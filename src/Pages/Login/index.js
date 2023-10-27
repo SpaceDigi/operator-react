@@ -14,8 +14,8 @@ export default function Login(props) {
 
   const dispatch = useDispatch();
   const USER_ID = useSelector((state) => state.USER_ID);
-  const serviceCenterId = useSelector((state) => state.serviceCenterId);
-  const workplaceId = useSelector((state) => state.workplaceId);
+  const serviceCenterId = useSelector((state) => state.serviceCenter.id);
+  const workplaceId = useSelector((state) => state.workplace.id);
   console.log(USER_ID);
 
   useEffect(() => {
