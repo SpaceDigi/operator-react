@@ -1,6 +1,60 @@
 import React from 'react';
 
-export default function DelayBlock() {
+export default function DelayBlock({
+  delayHours,
+  delayMinutes,
+  suspendJobForTime,
+  delayDisabled,
+  delayDropdownOpened,
+  toggleDelayDropdown,
+  setHours,
+  setMinutes,
+}) {
+  const increaseHours = () => {
+    if (delayHours !== 23) {
+      setHours((prev) => prev + 1);
+    } else {
+      setHours(0);
+    }
+  };
+
+  const decreaseHours = () => {
+    if (delayHours !== 0) {
+      setHours((prev) => prev - 1);
+    } else {
+      setHours(23);
+    }
+  };
+
+  const increaseMinutes = () => {
+    if (delayMinutes !== 23) {
+      setMinutes((prev) => prev + 1);
+    } else {
+      setMinutes(0);
+    }
+  };
+
+  const decreaseMinutes = () => {
+    if (delayMinutes !== 0) {
+      setMinutes((prev) => prev - 1);
+    } else {
+      setMinutes(23);
+    }
+  };
+
+  const parseNumberToTime = (number) => {
+    if (number < 10) {
+      return '0' + number;
+    } else {
+      return number;
+    }
+  };
+
+  const resetDelayTime = () => {
+    setHours(0);
+    setMinutes(0);
+  };
+
   return (
     <div className="box">
       <div className="box-title">
@@ -10,14 +64,8 @@ export default function DelayBlock() {
       <div className="box-content">
         <div className="input-block">
           <button
-            disabled={
-              this.state.operatorStatus === 'TICKET_IN_PROGRESS' ? false : true
-            }
-            onClick={() =>
-              this.setState({
-                dropDownBlock: !this.state.dropDownBlock,
-              })
-            }
+            disabled={delayDisabled}
+            onClick={toggleDelayDropdown}
             className="arr arr-down"
           ></button>
           <input
@@ -25,75 +73,42 @@ export default function DelayBlock() {
             className="input input-time"
             placeholder="Час"
             disabled
-            value={`${
-              this.state.hours < 10 ? '0' + this.state.hours : this.state.hours
-            } : ${
-              this.state.minutes < 10 ? '0' + this.state.minutes : this.state.minutes
-            }`}
+            value={`${parseNumberToTime(delayHours)} : ${parseNumberToTime(
+              delayMinutes
+            )}`}
           />
-          {this.state.dropDownBlock && (
+          {delayDropdownOpened && (
             <div className="timer-box">
               <div className="timer-inputs">
                 <div className="timer-input">
-                  <button
-                    onClick={() => this.renderHours('increase')}
-                    className="increase"
-                  ></button>
+                  <button onClick={increaseHours} className="increase"></button>
                   <input
                     type="number"
                     className="nums"
                     disabled
-                    value={
-                      this.state.hours < 10
-                        ? '0' + this.state.hours
-                        : this.state.hours
-                    }
+                    value={parseNumberToTime(delayHours)}
                   />
-                  <button
-                    onClick={() => this.renderHours('decrease')}
-                    className="decrease"
-                  ></button>
+                  <button onClick={decreaseHours} className="decrease"></button>
                 </div>
                 <span>:</span>
                 <div className="timer-input">
-                  <button
-                    onClick={() => this.renderMinutes('increase')}
-                    className="increase"
-                  ></button>
+                  <button onClick={increaseMinutes} className="increase"></button>
                   <input
                     type="number"
                     className="nums"
                     disabled
-                    value={
-                      this.state.minutes < 10
-                        ? '0' + this.state.minutes
-                        : this.state.minutes
-                    }
+                    value={parseNumberToTime(delayMinutes)}
                   />
-                  <button
-                    onClick={() => this.renderMinutes('decrease')}
-                    className="decrease"
-                  ></button>
+                  <button onClick={decreaseMinutes} className="decrease"></button>
                 </div>
               </div>
 
               <div className="timer-buttons">
-                <button
-                  // onClick={() =>
-                  //   this.postponForWhile(
-                  //     this.state.hours,
-                  //     this.state.minutes
-                  //   )
-                  // }
-                  onClick={() => this.setState({ fieldStatus: 4 })}
-                  form="detailsForm"
-                  type="submit"
-                  className="button"
-                >
+                <button onClick={suspendJobForTime} type="button" className="button">
                   Підтвердити
                 </button>
                 <button
-                  onClick={() => this.setState({ hours: 0, minutes: 0 })}
+                  onClick={resetDelayTime}
                   type="submit"
                   className="button reset"
                 >

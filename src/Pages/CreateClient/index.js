@@ -67,18 +67,6 @@ export default function CreateClient(props) {
     // eslint-disable-next-line
   }, []);
 
-  const startJob = async (jobGuid) => {
-    await API.post(links.startJob, {
-      organisationGuid: config.ORG_GUID,
-      serviceCenterId,
-      workplaceId,
-      jobGuid,
-    }).then((res) => {
-      console.log('start job ==>', res.data);
-      props.history.push(routes.dashboard);
-    });
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -96,7 +84,7 @@ export default function CreateClient(props) {
       documentNum: '',
     }).then((res) => {
       if (res.data.data.jobGuid) {
-        startJob(res.data.data.jobGuid);
+        props.history.push(routes.dashboard);
       }
     });
   };

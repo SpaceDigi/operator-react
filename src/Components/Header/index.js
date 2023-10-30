@@ -8,12 +8,13 @@ export default function Header({
   soundRecordStatus = '',
   commonTicketListSize = 0,
   directTicketListSize = 0,
+  postponedTicketListSize = 0,
 
   logout,
+  logoutIsDisabled = false,
   loading = false,
-  serviceTitle = 'Test123',
-  numTicket = '123',
-  postponedTicketListSize = 0,
+  serviceTitle,
+  numTicket,
 }) {
   const workplace = useSelector((state) => state.workplace);
   const serviceCenter = useSelector((state) => state.serviceCenter);
@@ -42,7 +43,11 @@ export default function Header({
               {serviceCenter.title} / <strong>{workplace.title}</strong>
             </div>
             <div className="header-top__logout">
-              <button onClick={logout} className="header-logout">
+              <button
+                disabled={logoutIsDisabled}
+                onClick={logout}
+                className="header-logout"
+              >
                 Вийти
               </button>
             </div>

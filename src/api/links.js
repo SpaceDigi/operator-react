@@ -23,6 +23,7 @@ const links = {
   deleteClient: '/v1/Customers/DropCustomer',
 
   suspendJob: '/v1/Jobs/SuspendJob',
+  suspendJobForTime: '/v1/Jobs/SuspendJobForTime',
   startJob: '/v1/Jobs/StartJob',
   completeJob: '/v1/Jobs/CompleteJob',
 

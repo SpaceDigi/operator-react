@@ -22,9 +22,12 @@ import {
   delayButtonDisabledStatuses,
   deleteButtonDisabledStatuses,
   endButtonDisabledStatuses,
+  logoutButtonDisabledStatuses,
   operatorStatuses,
   startButtonDisabledStatuses,
 } from './constants';
+import moment from 'moment';
+import { parseHoursAndMinutesToMs } from './helpers';
 
 const initialCustomerState = {
   serviceName: '-',
@@ -37,7 +40,12 @@ export default function Dashboard({ history }) {
   const [customer, setCustomer] = useState(initialCustomerState);
   const [queueState, setQueueState] = useState(null);
   const [workplaceState, setWorkplaceState] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [ticketTime, setTicketTime] = useState(0);
+  const [startTime, setStartTime] = useState(null);
+  const [delayHours, setDelayHours] = useState(0);
+  const [delayMinutes, setDelayMinutes] = useState(0);
+  const [delayDropdownOpened, setDelayDropdownOpened] = useState(false);
 
   const dispatch = useDispatch();
   const serviceCenterId = useSelector((state) => state.serviceCenter.id);
@@ -62,6 +70,10 @@ export default function Dashboard({ history }) {
   //     setJobs(res.data.data);
   //   });
   // };
+
+  const toggleDelayDropdown = () => {
+    setDelayDropdownOpened((prev) => !prev);
+  };
 
   const getQueueState = async () => {
     await API.get(`${links.getQueueState}?${apiQueryParams}`).then((res) => {
@@ -146,9 +158,24 @@ export default function Dashboard({ history }) {
     });
   };
 
+  const suspendJobForTime = async () => {
+    await API.post(links.suspendJobForTime, {
+      organisationGuid: config.ORG_GUID,
+      serviceCenterId,
+      workplaceId,
+      jobGuid: customer.jobGuid,
+      comment: '',
+      suspendTime: parseHoursAndMinutesToMs(delayHours, delayMinutes),
+    }).then((res) => {
+      getWorkplaceState();
+      setCustomer(initialCustomerState);
+      toggleDelayDropdown();
+    });
+  };
+
   useEffect(() => {
     getWorkplaceState();
-    const interval = setInterval(getQueueState(), 60 * 1000);
+    const interval = setInterval(getQueueState(), 50 * 1000);
 
     return () => {
       clearInterval(interval);
@@ -160,8 +187,39 @@ export default function Dashboard({ history }) {
     if (workplaceState === operatorStatuses.TICKET_IS_CALLED) {
       callClient();
     }
+
+    if (workplaceState === operatorStatuses.TICKET_IN_PROGRESS) {
+      startTimer();
+    } else {
+      stopTimer();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workplaceState]);
+
+  useEffect(() => {
+    let interval;
+
+    if (startTime) {
+      interval = setInterval(() => {
+        const now = moment();
+        const elapsed = now.diff(startTime);
+        setTicketTime(elapsed);
+      }, 100);
+    } else {
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
+  }, [startTime]);
+
+  const startTimer = () => {
+    setStartTime(moment());
+  };
+
+  const stopTimer = () => {
+    setStartTime(null);
+    setTicketTime(0);
+  };
 
   const callButtonDisabled =
     callButtonDisabledStatuses.includes(workplaceState) || loading;
@@ -175,9 +233,14 @@ export default function Dashboard({ history }) {
     createButtonDisabledStatuses.includes(workplaceState) || loading;
   const delayButtonDisabled =
     delayButtonDisabledStatuses.includes(workplaceState) || loading;
+  const logoutIsDisabled =
+    logoutButtonDisabledStatuses.includes(workplaceState) || loading;
+
   return (
     <>
       <Header
+        time={ticketTime}
+        logoutIsDisabled={logoutIsDisabled}
         logout={logoutUser}
         serviceTitle={customer.serviceName}
         numTicket={customer.receiptNumber}
@@ -224,7 +287,16 @@ export default function Dashboard({ history }) {
                       />
                     </div>
                   </div>
-                  {/* <DelayBlock /> */}
+                  <DelayBlock
+                    delayDisabled={delayButtonDisabled}
+                    delayHours={delayHours}
+                    delayMinutes={delayMinutes}
+                    delayDropdownOpened={delayDropdownOpened}
+                    toggleDelayDropdown={toggleDelayDropdown}
+                    setHours={setDelayHours}
+                    setMinutes={setDelayMinutes}
+                    suspendJobForTime={suspendJobForTime}
+                  />
                 </div>
               </div>
             </div>
