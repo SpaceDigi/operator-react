@@ -23,8 +23,17 @@ export default function Header({
     <header>
       <div className="header-top">
         <div className="container">
-          <a href="/" className="logo">
-            <img src={logo} alt="loho" />
+          <a
+            href="/"
+            className="logo"
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              fontStyle: 'italic',
+              color: 'white',
+            }}
+          >
+            СІНЕВО
           </a>
 
           <div className="header-top__right">

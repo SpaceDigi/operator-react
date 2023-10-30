@@ -25,9 +25,16 @@ import {
   logoutButtonDisabledStatuses,
   operatorStatuses,
   startButtonDisabledStatuses,
+  tabsValues,
 } from './constants';
 import moment from 'moment';
 import { parseHoursAndMinutesToMs } from './helpers';
+import TabsHead from './Tabs/TabsHead';
+import TasksTab from './Tabs/RedirectToWorkplaceTab';
+import RedirectTicketTab from './Tabs/RedirectToEmployeeTab';
+import PostponedJobsTab from './Tabs/PostponedJobsTab';
+import RedirectToEmployeeTab from './Tabs/RedirectToEmployeeTab';
+import RedirectToWorkplaceTab from './Tabs/RedirectToWorkplaceTab';
 
 const initialCustomerState = {
   serviceName: '-',
@@ -36,7 +43,6 @@ const initialCustomerState = {
 };
 
 export default function Dashboard({ history }) {
-  const [jobs, setJobs] = useState([]);
   const [customer, setCustomer] = useState(initialCustomerState);
   const [queueState, setQueueState] = useState(null);
   const [workplaceState, setWorkplaceState] = useState(0);
@@ -46,6 +52,8 @@ export default function Dashboard({ history }) {
   const [delayHours, setDelayHours] = useState(0);
   const [delayMinutes, setDelayMinutes] = useState(0);
   const [delayDropdownOpened, setDelayDropdownOpened] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const [suspendedJobs, setSuspendedJobs] = useState([]);
 
   const dispatch = useDispatch();
   const serviceCenterId = useSelector((state) => state.serviceCenter.id);
@@ -168,14 +176,43 @@ export default function Dashboard({ history }) {
       suspendTime: parseHoursAndMinutesToMs(delayHours, delayMinutes),
     }).then((res) => {
       getWorkplaceState();
+      resetDelayValues();
       setCustomer(initialCustomerState);
-      toggleDelayDropdown();
     });
+  };
+
+  const getSuspendedJobs = async () => {
+    await API.get(`${links.getSuspendedJobs}?${apiQueryParams}`).then((res) => {
+      console.log('sus jobs ==>', res.data.data);
+      setSuspendedJobs(res.data.data);
+    });
+  };
+
+  const handleSuspendedJobClick = async (e) => {
+    const jobGuid = e.currentTarget.dataset.id;
+    if (jobGuid) {
+      await API.post(links.resumeSuspendedJob, {
+        jobGuid,
+        organisationGuid: config.ORG_GUID,
+        workplaceId,
+        serviceCenterId,
+      }).then(() => {
+        callClient();
+        setSuspendedJobs([]);
+        setActiveTab(0);
+      });
+    }
+  };
+
+  const resetDelayValues = () => {
+    setDelayHours(0);
+    setDelayMinutes(0);
+    setDelayDropdownOpened(false);
   };
 
   useEffect(() => {
     getWorkplaceState();
-    const interval = setInterval(getQueueState(), 50 * 1000);
+    const interval = setInterval(getQueueState, 1000 * 30);
 
     return () => {
       clearInterval(interval);
@@ -195,6 +232,19 @@ export default function Dashboard({ history }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workplaceState]);
+
+  useEffect(() => {
+    if (activeTab === tabsValues.POSTPONED) {
+      getSuspendedJobs();
+    }
+
+    if (activeTab === tabsValues.REDIRECT_TO_EMPLOYEE) {
+    }
+
+    if (activeTab === tabsValues.REDIRECT_TO_WORKPLACE) {
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   useEffect(() => {
     let interval;
@@ -301,139 +351,24 @@ export default function Dashboard({ history }) {
               </div>
             </div>
             <div className="col-1-3">
-              {/* <div className="box">
-                <ul className={`${this.state.tab !== 0 ? 'tabs' : 'tabs-none'}`}>
-                  <button
-                    className={`${this.state.tab === 1 ? 'active' : ''}`}
-                    onClick={() => {
-                      this.getServiceList();
-                      this.setState({ tab: 1 });
-                    }}
-                    disabled={
-                      this.state.operatorStatus === 'NO_TICKET_TO_CALL' ||
-                      this.state.operatorStatus === 'TICKET_TO_CALL'
-                        ? false
-                        : true
-                    }
-                  >
-                    Задачі
-                  </button>
-                  <button
-                    className={`${this.state.tab === 2 ? 'active' : ''}`}
-                    onClick={() => {
-                      this.getActiveList();
-                      this.setState({ tab: 2 });
-                    }}
-                    disabled={
-                      this.state.operatorStatus === 'TICKET_IN_PROGRESS'
-                        ? false
-                        : true
-                    }
-                  >
-                    Направити
-                  </button>
-                  <button
-                    className={`${this.state.tab === 3 ? 'active' : ''}`}
-                    onClick={() => {
-                      this.getPostponedList();
-                      this.setState({ tab: 3 });
-                    }}
-                    disabled={
-                      this.state.operatorStatus === 'NO_TICKET_TO_CALL' ||
-                      this.state.operatorStatus === 'TICKET_TO_CALL'
-                        ? false
-                        : true
-                    }
-                  >
-                    Відкладені
-                  </button>
-                </ul>
-
-                <div
-                  className={`tab-content  ${this.state.tab === 1 ? 'active' : ''}`}
-                >
-                  <ul className="tab-list">
-                    {!this.state.serviceList.length ? (
-                      <p>Список порожній</p>
-                    ) : (
-                      this.state.serviceList.map((service, index) => {
-                        return (
-                          <li key={index} className="task-orange">
-                            <p>
-                              {service.title}
-                              <span>{service.lengthInMinutes} хвилин</span>
-                            </p>
-                            <button
-                              onClick={() => {
-                                localStorage.setItem(Keys.SERVICE_ID, service.id);
-                                this.internalOperationStart(service.id);
-                              }}
-                              className="arr arr-right"
-                            ></button>
-                          </li>
-                        );
-                      })
-                    )}
-                  </ul>
-                </div>
-                <div
-                  className={`tab-content  ${this.state.tab === 2 ? 'active' : ''}`}
-                >
-                  <ul className="tab-list">
-                    {!this.state.workplaceActiveList.length ? (
-                      <p>Список порожній</p>
-                    ) : (
-                      this.state.workplaceActiveList.map((workplace, index) => {
-                        return (
-                          <li key={index}>
-                            <p>
-                              {workplace.title}
-                              <span> </span>
-                            </p>
-                            <button
-                              onClick={() =>
-                                this.setState({
-                                  fieldStatus: 5,
-                                  workplaceId: workplace.workplaceId,
-                                })
-                              }
-                              form="detailsForm"
-                              // onClick={() =>
-                              //   this.ticketRedirect(workplace.workplaceId)
-                              // }
-                              className="arr arr-right"
-                            ></button>
-                          </li>
-                        );
-                      })
-                    )}
-                  </ul>
-                </div>
-                <div
-                  className={`tab-content  ${this.state.tab === 3 ? 'active' : ''}`}
-                >
-                  <ul className="tab-list">
-                    {!this.state.ticketList.length ? (
-                      <p>Список порожній</p>
-                    ) : (
-                      this.state.ticketList.map((ticket, index) => {
-                        return (
-                          <li key={index}>
-                            <p style={{ paddingTop: 8 }}>
-                              <span>{ticket.key} квиток</span>
-                            </p>
-                            <button
-                              onClick={() => this.callPostponed(ticket.id)}
-                              className="arr arr-right"
-                            ></button>
-                          </li>
-                        );
-                      })
-                    )}
-                  </ul>
-                </div>
-                <div className="tab-content">#Відкладені</div>
-              </div> */}
+              <div className="box">
+                <TabsHead
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  workplaceState={workplaceState}
+                />
+                <PostponedJobsTab
+                  active={activeTab === tabsValues.POSTPONED}
+                  postponedTicketList={suspendedJobs}
+                  handlePostponedTicketClick={handleSuspendedJobClick}
+                />
+                <RedirectToEmployeeTab
+                  active={activeTab === tabsValues.REDIRECT_TO_EMPLOYEE}
+                />
+                <RedirectToWorkplaceTab
+                  active={activeTab === tabsValues.REDIRECT_TO_WORKPLACE}
+                />
+              </div>
             </div>
           </div>
         </div>

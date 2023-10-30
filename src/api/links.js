@@ -27,6 +27,9 @@ const links = {
   startJob: '/v1/Jobs/StartJob',
   completeJob: '/v1/Jobs/CompleteJob',
 
+  getSuspendedJobs: '/v1/Auxiliary/GetSuspendedJobs',
+  resumeSuspendedJob: '/v1/Jobs/ResumeSuspendedJob',
+
   dataPull: `/api/operator/data/pull`,
   listTicket: `/api/operator/service/list/ticket`,
   workplaceActive: `/api/operator/workplace/activate`,
