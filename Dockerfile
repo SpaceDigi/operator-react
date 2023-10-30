@@ -1,5 +1,5 @@
 # build env
-FROM node:16.16.0-alpine as build
+FROM node:16.20.0-alpine as build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
