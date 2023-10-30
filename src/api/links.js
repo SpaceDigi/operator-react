@@ -30,6 +30,9 @@ const links = {
   getSuspendedJobs: '/v1/Auxiliary/GetSuspendedJobs',
   resumeSuspendedJob: '/v1/Jobs/ResumeSuspendedJob',
 
+  getEmployees: '/v1/auxiliary/getEmployees',
+  redirectToEmlployee: '/v1/Jobs/RedirectToEmployee',
+
   dataPull: `/api/operator/data/pull`,
   listTicket: `/api/operator/service/list/ticket`,
   workplaceActive: `/api/operator/workplace/activate`,

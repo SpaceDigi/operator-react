@@ -12,17 +12,18 @@ export default function RedirectToEmployeeTab({
           {!employeeList.length ? (
             <p>Список порожній</p>
           ) : (
-            employeeList.map((workplace, index) => {
+            employeeList.map((item, index) => {
               return (
-                <li key={index}>
+                <li key={item.employeeId}>
                   <p>
-                    {workplace.title}
+                    {item.description}
                     <span> </span>
                   </p>
                   <button
                     type="button"
                     onClick={handleRedirectToEmployeeClick}
                     className="arr arr-right"
+                    data-id={item.employeeId}
                   ></button>
                 </li>
               );

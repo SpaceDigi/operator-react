@@ -30,8 +30,6 @@ import {
 import moment from 'moment';
 import { parseHoursAndMinutesToMs } from './helpers';
 import TabsHead from './Tabs/TabsHead';
-import TasksTab from './Tabs/RedirectToWorkplaceTab';
-import RedirectTicketTab from './Tabs/RedirectToEmployeeTab';
 import PostponedJobsTab from './Tabs/PostponedJobsTab';
 import RedirectToEmployeeTab from './Tabs/RedirectToEmployeeTab';
 import RedirectToWorkplaceTab from './Tabs/RedirectToWorkplaceTab';
@@ -54,6 +52,7 @@ export default function Dashboard({ history }) {
   const [delayDropdownOpened, setDelayDropdownOpened] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [suspendedJobs, setSuspendedJobs] = useState([]);
+  const [employeesToRedirect, setEmployeesToRedirect] = useState([]);
 
   const dispatch = useDispatch();
   const serviceCenterId = useSelector((state) => state.serviceCenter.id);
@@ -95,8 +94,11 @@ export default function Dashboard({ history }) {
       console.log('customer', res.data);
       if (res.data.data.receiptNumber) {
         setCustomer(res.data.data);
-        getWorkplaceState();
+      } else {
+        setCustomer(initialCustomerState);
+        setTicketTime(0);
       }
+      getWorkplaceState();
     });
   };
 
@@ -210,6 +212,34 @@ export default function Dashboard({ history }) {
     setDelayDropdownOpened(false);
   };
 
+  const getEmployeesToRedirect = async () => {
+    await API.get(`${links.getEmployees}?${apiQueryParams}`).then((res) => {
+      setEmployeesToRedirect(res.data.data);
+    });
+  };
+
+  const handleRedirectToEmployee = async (e) => {
+    const employeeId = e.target.dataset.id;
+    await API.post(links.redirectToEmlployee, {
+      organisationGuid: config.ORG_GUID,
+      serviceCenterId,
+      workplaceId,
+      jobGuid: customer.jobGuid,
+      comment: '',
+      needComeBack: true,
+      employeeId,
+    }).then((res) => {
+      resetTicket();
+    });
+  };
+
+  const resetTicket = () => {
+    setCustomer(initialCustomerState);
+    setTicketTime(0);
+    getWorkplaceState();
+    setActiveTab(0);
+  };
+
   useEffect(() => {
     getWorkplaceState();
     const interval = setInterval(getQueueState, 1000 * 30);
@@ -239,6 +269,7 @@ export default function Dashboard({ history }) {
     }
 
     if (activeTab === tabsValues.REDIRECT_TO_EMPLOYEE) {
+      getEmployeesToRedirect();
     }
 
     if (activeTab === tabsValues.REDIRECT_TO_WORKPLACE) {
@@ -364,6 +395,8 @@ export default function Dashboard({ history }) {
                 />
                 <RedirectToEmployeeTab
                   active={activeTab === tabsValues.REDIRECT_TO_EMPLOYEE}
+                  employeeList={employeesToRedirect}
+                  handleRedirectToEmployeeClick={handleRedirectToEmployee}
                 />
                 <RedirectToWorkplaceTab
                   active={activeTab === tabsValues.REDIRECT_TO_WORKPLACE}

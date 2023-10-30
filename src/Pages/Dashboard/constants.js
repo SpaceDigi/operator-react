@@ -30,6 +30,7 @@ export const delayButtonDisabledStatuses = [TICKET_TO_CALL, CLOSED];
 export const logoutButtonDisabledStatuses = [TICKET_IS_CALLED, TICKET_IN_PROGRESS];
 
 export const postponedTabDisabledStatuses = [TICKET_IS_CALLED, TICKET_IN_PROGRESS];
+export const redirectTabDisabledStatuses = [TICKET_TO_CALL, CLOSED];
 
 export const tabsValues = {
   REDIRECT_TO_EMPLOYEE: 1,

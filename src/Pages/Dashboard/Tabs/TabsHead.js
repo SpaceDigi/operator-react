@@ -1,9 +1,12 @@
 import React from 'react';
-import { postponedTabDisabledStatuses, tabsValues } from '../constants';
+import {
+  postponedTabDisabledStatuses,
+  redirectTabDisabledStatuses,
+  tabsValues,
+} from '../constants';
 
 export default function TabsHead({ activeTab, setActiveTab, workplaceState }) {
-  const tasksTabDisabled = false;
-  const sendTabDisabled = false;
+  const redirectTabDisabled = redirectTabDisabledStatuses.includes(workplaceState);
   const delayedTabDisabled = postponedTabDisabledStatuses.includes(workplaceState);
 
   return (
@@ -13,7 +16,7 @@ export default function TabsHead({ activeTab, setActiveTab, workplaceState }) {
           activeTab === tabsValues.REDIRECT_TO_EMPLOYEE ? 'active' : ''
         }`}
         onClick={() => setActiveTab(tabsValues.REDIRECT_TO_EMPLOYEE)}
-        disabled={tasksTabDisabled}
+        disabled={redirectTabDisabled}
       >
         Cпівробітники
       </button>
@@ -22,7 +25,7 @@ export default function TabsHead({ activeTab, setActiveTab, workplaceState }) {
           activeTab === tabsValues.REDIRECT_TO_WORKPLACE ? 'active' : ''
         }`}
         onClick={() => setActiveTab(tabsValues.REDIRECT_TO_WORKPLACE)}
-        disabled={sendTabDisabled}
+        disabled={redirectTabDisabled}
       >
         Робочі місця
       </button>
