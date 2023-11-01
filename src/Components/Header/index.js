@@ -1,5 +1,6 @@
 import React from 'react';
-import logo from '../../img/logo.svg';
+import sinevoLogo from '../../img/sinevo-logo.svg';
+import sinevoLogoSm from '../../img/sinevo-logo-sm.svg';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 
@@ -33,7 +34,7 @@ export default function Header({
               color: 'white',
             }}
           >
-            СІНЕВО
+            <img src={sinevoLogo} alt="logo" />
           </a>
 
           <div className="header-top__right">

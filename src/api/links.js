@@ -30,6 +30,9 @@ const links = {
   getSuspendedJobs: '/v1/Auxiliary/GetSuspendedJobs',
   resumeSuspendedJob: '/v1/Jobs/ResumeSuspendedJob',
 
+  getWorkplaces: '/v1/auxiliary/getWorkPlaces',
+  redirectToWorkplace: '/v1/jobs/redirectToWorkplace',
+
   getEmployees: '/v1/auxiliary/getEmployees',
   redirectToEmlployee: '/v1/Jobs/RedirectToEmployee',
 

@@ -22,6 +22,7 @@ export default function ChooseData(props) {
   const [departmentsList, setDepartmentsList] = useState([]);
   const [workplace, setWorkplace] = useState({ description: workTxt });
   const [workplaceList, setWorkplaceList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const USER_ID = useSelector((state) => state.USER_ID);
@@ -90,6 +91,7 @@ export default function ChooseData(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(workplace);
+    setLoading(true);
     API.post(links.login, {
       organisationGuid: config.ORG_GUID,
       serviceCenterId: selectedServiceCenterId,
@@ -112,13 +114,14 @@ export default function ChooseData(props) {
         })
       );
     });
+    setLoading(false);
   };
 
   const logout = () => {
     dispatch(setUserId(null));
   };
 
-  const submitDisabled = !selectedWorkplaceId || !selectedServiceCenterId;
+  const submitDisabled = !selectedWorkplaceId || !selectedServiceCenterId || loading;
 
   return (
     <React.Fragment>

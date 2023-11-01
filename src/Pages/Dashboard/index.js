@@ -53,6 +53,7 @@ export default function Dashboard({ history }) {
   const [activeTab, setActiveTab] = useState(0);
   const [suspendedJobs, setSuspendedJobs] = useState([]);
   const [employeesToRedirect, setEmployeesToRedirect] = useState([]);
+  const [workplacesToRedirect, setWorplacesToRedirect] = useState([]);
 
   const dispatch = useDispatch();
   const serviceCenterId = useSelector((state) => state.serviceCenter.id);
@@ -233,6 +234,27 @@ export default function Dashboard({ history }) {
     });
   };
 
+  const getWorkplacesToRedirect = async () => {
+    await API.get(`${links.getWorkplaces}?${apiQueryParams}`).then((res) => {
+      setWorplacesToRedirect(res.data.data);
+    });
+  };
+
+  const handleRedirectToWorkplace = async (e) => {
+    const newWorkplaceId = e.target.dataset.id;
+    await API.post(links.redirectToWorkplace, {
+      organisationGuid: config.ORG_GUID,
+      serviceCenterId,
+      workplaceId,
+      jobGuid: customer.jobGuid,
+      comment: '',
+      needComeBack: true,
+      newWorkplaceId,
+    }).then((res) => {
+      resetTicket();
+    });
+  };
+
   const resetTicket = () => {
     setCustomer(initialCustomerState);
     setTicketTime(0);
@@ -273,6 +295,7 @@ export default function Dashboard({ history }) {
     }
 
     if (activeTab === tabsValues.REDIRECT_TO_WORKPLACE) {
+      getWorkplacesToRedirect();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
@@ -399,7 +422,9 @@ export default function Dashboard({ history }) {
                   handleRedirectToEmployeeClick={handleRedirectToEmployee}
                 />
                 <RedirectToWorkplaceTab
+                  workplaceList={workplacesToRedirect}
                   active={activeTab === tabsValues.REDIRECT_TO_WORKPLACE}
+                  handleRedirectToWorkplaceClick={handleRedirectToWorkplace}
                 />
               </div>
             </div>

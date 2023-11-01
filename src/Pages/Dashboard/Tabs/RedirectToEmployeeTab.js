@@ -5,6 +5,8 @@ export default function RedirectToEmployeeTab({
   handleRedirectToEmployeeClick,
   employeeList = [],
 }) {
+  const filteredEmployeeList = employeeList.filter((item) => item.isActive);
+
   return (
     <div>
       <div className={`tab-content  ${active ? 'active' : ''}`}>
@@ -12,7 +14,7 @@ export default function RedirectToEmployeeTab({
           {!employeeList.length ? (
             <p>Список порожній</p>
           ) : (
-            employeeList.map((item, index) => {
+            filteredEmployeeList.map((item, index) => {
               return (
                 <li key={item.employeeId}>
                   <p>
