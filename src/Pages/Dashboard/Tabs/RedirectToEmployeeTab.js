@@ -17,9 +17,15 @@ export default function RedirectToEmployeeTab({
             filteredEmployeeList.map((item, index) => {
               return (
                 <li key={item.employeeId}>
-                  <p>
+                  <p
+                    style={{
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                      marginRight: '3px',
+                    }}
+                  >
                     {item.description}
-                    <span> </span>
                   </p>
                   <button
                     type="button"

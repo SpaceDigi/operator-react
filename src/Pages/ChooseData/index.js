@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SelectDropdown from '../../Components/CustomComponents/SelectDropdown';
 import API from '../../api/API';
-import logoBlack from '../../img/logo-black.svg';
+import logo from '../../img/sinevo-logo.svg';
 import BackgroundPage from '../../Components/BackgroundPage';
 import links from '../../api/links';
 import { useDispatch, useSelector } from 'react-redux';
@@ -132,7 +132,7 @@ export default function ChooseData(props) {
             <div className="pop-up" id="auth">
               <div className="pop-up-top">
                 <strong>Вхід в систему</strong>
-                <img src={logoBlack} alt="logo" />
+                <img src={logo} style={{ width: '75px' }} alt="logo" />
               </div>
               <form onSubmit={handleSubmit} className="form">
                 <p className="form-title">Оберіть дані</p>

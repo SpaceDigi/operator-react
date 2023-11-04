@@ -16,7 +16,6 @@ export default function Login(props) {
   const USER_ID = useSelector((state) => state.USER_ID);
   const serviceCenterId = useSelector((state) => state.serviceCenter.id);
   const workplaceId = useSelector((state) => state.workplace.id);
-  console.log(USER_ID);
 
   useEffect(() => {
     document.body.className = 'fix';

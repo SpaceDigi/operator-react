@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import BackgroundPage from '../../Components/BackgroundPage';
 import API from '../../api/API';
-import logoBlack from '../../img/logo-black.svg';
+import logo from '../../img/sinevo-logo.svg';
 import SelectDropdown from '../../Components/CustomComponents/SelectDropdown';
 import links from '../../api/links';
 import { useSelector } from 'react-redux';
@@ -49,6 +49,10 @@ export default function CreateClient(props) {
     });
   };
 
+  const getQueueState = async () => {
+    await API.get(`${links.getQueueState}?${apiQueryParams}`);
+  };
+
   const getData = async () => {
     setLoading(true);
     await getCustomerTypes();
@@ -61,7 +65,10 @@ export default function CreateClient(props) {
     document.body.className = 'fix';
 
     getData();
+
+    const interval = setInterval(getQueueState, 1000 * 50);
     return () => {
+      clearInterval(interval);
       document.body.className = document.body.className.replace('fix', '');
     };
     // eslint-disable-next-line
@@ -104,7 +111,7 @@ export default function CreateClient(props) {
               <div className="pop-up-top">
                 <strong>Створити</strong>
                 {loading && <div className="loader-black">Loading...</div>}
-                <img src={logoBlack} alt="logo" />
+                <img src={logo} alt="logo" width={75} />
               </div>
               <form onSubmit={(event) => handleSubmit(event)} className="form">
                 <p className="form-title">НОВИЙ КЛІЄНТ</p>

@@ -7,14 +7,10 @@ const links = {
   logout: `/v1/workplace/logoff`,
 
   getJobs: '/v1/auxiliary/getJobs',
-  //analog from old api
-  serviceList: `/api/operator/service/list/internal`,
 
   getQueueState: '/v1/Auxiliary/GetQueueState',
 
   callCustomer: '/v1/customers/getCustomer',
-  //analog
-  ticketCall: `/api/operator/ticket/call`,
 
   getCustomerTypes: '/v1/Auxiliary/GetCustomerTypes',
   getLanguages: '/v1/Auxiliary/GetLanguages',

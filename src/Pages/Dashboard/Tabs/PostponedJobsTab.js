@@ -17,7 +17,14 @@ export default function PostponedJobsTab({
               return (
                 <li key={index}>
                   <p style={{ paddingTop: 8 }}>
-                    <span>
+                    <span
+                      style={{
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                        marginRight: '3px',
+                      }}
+                    >
                       Квиток №{job.receiptNumber}/ {job.serviceName}
                     </span>
                   </p>

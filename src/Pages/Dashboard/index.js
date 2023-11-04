@@ -42,7 +42,12 @@ const initialCustomerState = {
 
 export default function Dashboard({ history }) {
   const [customer, setCustomer] = useState(initialCustomerState);
-  const [queueState, setQueueState] = useState(null);
+  const [queueState, setQueueState] = useState({
+    totalCustomers: 0,
+    personalJobs: 0,
+    totalJobs: 0,
+    uncompleteCount: 0,
+  });
   const [workplaceState, setWorkplaceState] = useState(0);
   const [loading, setLoading] = useState(true);
   const [ticketTime, setTicketTime] = useState(0);
@@ -264,7 +269,8 @@ export default function Dashboard({ history }) {
 
   useEffect(() => {
     getWorkplaceState();
-    const interval = setInterval(getQueueState, 1000 * 30);
+    getQueueState();
+    const interval = setInterval(getQueueState, 1000 * 10);
 
     return () => {
       clearInterval(interval);
@@ -326,7 +332,9 @@ export default function Dashboard({ history }) {
   };
 
   const callButtonDisabled =
-    callButtonDisabledStatuses.includes(workplaceState) || loading;
+    callButtonDisabledStatuses.includes(workplaceState) ||
+    loading ||
+    !queueState.totalCustomers;
   const startButtonDisabled =
     startButtonDisabledStatuses.includes(workplaceState) || loading;
   const deleteButtonDisabled =
@@ -348,6 +356,9 @@ export default function Dashboard({ history }) {
         logout={logoutUser}
         serviceTitle={customer.serviceName}
         numTicket={customer.receiptNumber}
+        commonTicketListSize={queueState.totalCustomers}
+        postponedTicketListSize={queueState.uncompleteCount}
+        directTicketListSize={queueState.personalJobs}
       />
       <main>
         <div className="container">
@@ -404,7 +415,7 @@ export default function Dashboard({ history }) {
                 </div>
               </div>
             </div>
-            <div className="col-1-3">
+            <div className="col-1-3 ">
               <div className="box">
                 <TabsHead
                   activeTab={activeTab}

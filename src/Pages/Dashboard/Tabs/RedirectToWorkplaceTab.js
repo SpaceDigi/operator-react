@@ -19,10 +19,16 @@ export default function RedirectToWorkplaceTab({
             filteredWorkplaceList.map((item, index) => {
               return (
                 <li key={index} className="task-orange">
-                  <p>
-                    {item.title}
-                    <span>{item.description}</span>
-                  </p>
+                  <span
+                    style={{
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {item.description}
+                  </span>
+
                   <button
                     data-id={item.workPlaceId}
                     onClick={handleRedirectToWorkplaceClick}
