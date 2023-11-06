@@ -10,8 +10,8 @@ import {
   setUserData,
   setUserId,
   setWorkplace as setSelectedWorkplace,
+  setOrgGuid,
 } from '../../redux/auth/authSlice';
-import { config } from '../../config';
 import { routes } from '../../api/routes';
 
 const depTxt = 'Відділення';
@@ -29,10 +29,11 @@ export default function ChooseData(props) {
   const serviceCenterId = useSelector((state) => state.serviceCenter.id);
   const workplaceId = useSelector((state) => state.workplace.id);
   const { userLogin, userPassword } = props.location.state;
+  const organisationGuid = useSelector((state) => state.orgGuid);
 
   useEffect(() => {
     document.body.className = 'fix';
-    if (!userLogin || !userPassword || !USER_ID) {
+    if (!userLogin || !userPassword || !USER_ID || !organisationGuid) {
       props.history.push(routes.login);
     }
 
@@ -51,7 +52,7 @@ export default function ChooseData(props) {
 
   const loadBranchList = () => {
     API.get(
-      `${links.branchList}?EmployeeId=${USER_ID}&OrganisationGuid=${config.ORG_GUID}`
+      `${links.branchList}?EmployeeId=${USER_ID}&OrganisationGuid=${organisationGuid}`
     ).then((res) => {
       setDepartmentsList(res.data.data);
       console.log(res.data.data);
@@ -66,7 +67,7 @@ export default function ChooseData(props) {
 
   const loadWorkplaceList = (branchId) => {
     API.get(
-      `${links.workplaceList}?OrganisationGuid=${config.ORG_GUID}&ServiceCenterId=${branchId}`
+      `${links.workplaceList}?OrganisationGuid=${organisationGuid}&ServiceCenterId=${branchId}`
     ).then((res) => {
       console.log(res.data);
       setWorkplaceList(res.data.data);
@@ -88,13 +89,12 @@ export default function ChooseData(props) {
 
   const { workPlaceId: selectedWorkplaceId } = workplace;
   const { serviceCenterId: selectedServiceCenterId } = department;
-  console.log(department);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
     API.post(links.login, {
-      organisationGuid: config.ORG_GUID,
+      organisationGuid,
       serviceCenterId: selectedServiceCenterId,
       workplaceId: selectedWorkplaceId,
       userLogin,
@@ -119,6 +119,7 @@ export default function ChooseData(props) {
 
   const logout = () => {
     dispatch(setUserId(null));
+    dispatch(setOrgGuid(null));
   };
 
   const submitDisabled = !selectedWorkplaceId || !selectedServiceCenterId || loading;

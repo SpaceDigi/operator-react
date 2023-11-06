@@ -27,6 +27,10 @@ const initialState = {
     title: null,
   },
   userData: initialUserState,
+  orgGuid: '',
+  orgName: '',
+  ticketInProgress: false,
+  ticketTime: 0,
 };
 
 export const authSlice = createSlice({
@@ -59,6 +63,7 @@ export const authSlice = createSlice({
         title: null,
       };
       state.USER_ID = null;
+      state.orgGuid = '';
       state.userData = initialUserState;
     },
     setUserData: (state, action) => {
@@ -66,6 +71,18 @@ export const authSlice = createSlice({
     },
     setError: (state, action) => {
       state.error = { ...action.payload };
+    },
+    setOrgGuid: (state, action) => {
+      state.orgGuid = action.payload;
+    },
+    setOrgName: (state, action) => {
+      state.orgName = action.payload;
+    },
+    setTicketInProgress: (state, action) => {
+      state.ticketInProgress = action.payload;
+    },
+    setTicketTime: (state, action) => {
+      state.ticketTime = action.payload;
     },
   },
 });
@@ -77,6 +94,10 @@ export const {
   setWorkplace,
   logout,
   setError,
+  setOrgGuid,
+  setOrgName,
+  setTicketInProgress,
+  setTicketTime,
 } = authSlice.actions;
 
 export default authSlice.reducer;

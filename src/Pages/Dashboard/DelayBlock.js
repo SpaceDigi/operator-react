@@ -27,7 +27,7 @@ export default function DelayBlock({
   };
 
   const increaseMinutes = () => {
-    if (delayMinutes !== 23) {
+    if (delayMinutes !== 59) {
       setMinutes((prev) => prev + 1);
     } else {
       setMinutes(0);
@@ -38,7 +38,7 @@ export default function DelayBlock({
     if (delayMinutes !== 0) {
       setMinutes((prev) => prev - 1);
     } else {
-      setMinutes(23);
+      setMinutes(59);
     }
   };
 

@@ -6,7 +6,8 @@ const PrivateRoute = (props) => {
   const USER_ID = useSelector((state) => state.USER_ID);
   const workplaceId = useSelector((state) => state.workplace.id);
   const serviceCenterId = useSelector((state) => state.serviceCenter.id);
-  if (USER_ID && workplaceId && serviceCenterId) {
+  const orgGuid = useSelector((state) => state.orgGuid);
+  if (USER_ID && workplaceId && serviceCenterId && orgGuid) {
     return <Route {...props} />;
   } else {
     return <Redirect to="/" />;

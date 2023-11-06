@@ -3,16 +3,15 @@ import React, { useEffect, useState } from 'react';
 import API from '../../api/API';
 import links from '../../api/links';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../redux/auth/authSlice';
+import { logout, setTicketTime } from '../../redux/auth/authSlice';
 import { routes } from '../../api/routes';
-import { config } from '../../config';
 import Footer from '../../Components/Footer';
 import Header from '../../Components/Header';
 import CallButton from './CallButton';
 import StartButton from './StartButton';
 import CreateButton from './CreateButton';
 import EndButton from './EndButton';
-import Details from './Details';
+// import Details from './Details';
 import DeleteClientButton from './DeleteClientButton';
 import DelayButton from './DelayButton';
 import DelayBlock from './DelayBlock';
@@ -28,7 +27,7 @@ import {
   tabsValues,
 } from './constants';
 import moment from 'moment';
-import { parseHoursAndMinutesToMs } from './helpers';
+import { parseHoursAndMinutesToSeconds } from './helpers';
 import TabsHead from './Tabs/TabsHead';
 import PostponedJobsTab from './Tabs/PostponedJobsTab';
 import RedirectToEmployeeTab from './Tabs/RedirectToEmployeeTab';
@@ -50,7 +49,6 @@ export default function Dashboard({ history }) {
   });
   const [workplaceState, setWorkplaceState] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [ticketTime, setTicketTime] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [delayHours, setDelayHours] = useState(0);
   const [delayMinutes, setDelayMinutes] = useState(0);
@@ -63,12 +61,14 @@ export default function Dashboard({ history }) {
   const dispatch = useDispatch();
   const serviceCenterId = useSelector((state) => state.serviceCenter.id);
   const workplaceId = useSelector((state) => state.workplace.id);
+  const organisationGuid = useSelector((state) => state.orgGuid);
+  const ticketTime = useSelector((state) => state.ticketTime);
 
-  const apiQueryParams = `organisationGuid=${config.ORG_GUID}&serviceCenterId=${serviceCenterId}&workplaceId=${workplaceId}`;
+  const apiQueryParams = `organisationGuid=${organisationGuid}&serviceCenterId=${serviceCenterId}&workplaceId=${workplaceId}`;
 
   const logoutUser = () => {
     API.post(links.logout, {
-      organisationGuid: config.ORG_GUID,
+      organisationGuid,
       serviceCenterId: serviceCenterId,
       workplaceId: workplaceId,
     }).then((res) => {
@@ -90,47 +90,51 @@ export default function Dashboard({ history }) {
 
   const getQueueState = async () => {
     await API.get(`${links.getQueueState}?${apiQueryParams}`).then((res) => {
-      console.log('queue state', res.data);
       setQueueState(res.data.data);
     });
   };
 
   const callClient = async () => {
+    setLoading(true);
     await API.get(`${links.callCustomer}?${apiQueryParams}`).then((res) => {
-      console.log('customer', res.data);
       if (res.data.data.receiptNumber) {
         setCustomer(res.data.data);
+        ticketTime && startJob({ jobGuid: res.data.data.jobGuid });
       } else {
         setCustomer(initialCustomerState);
         setTicketTime(0);
       }
       getWorkplaceState();
     });
+    setLoading(false);
   };
 
-  const startJob = async () => {
+  const startJob = async ({ jobGuid }) => {
+    setLoading(true);
     await API.post(links.startJob, {
-      organisationGuid: config.ORG_GUID,
+      organisationGuid,
       serviceCenterId,
       workplaceId,
-      jobGuid: customer.jobGuid,
+      jobGuid: customer.jobGuid || jobGuid,
     }).then((res) => {
-      console.log('start job ==>', res.data);
       //temp solution
+
       setWorkplaceState(operatorStatuses.TICKET_IN_PROGRESS);
-      history.push(routes.dashboard);
     });
+    setLoading(false);
   };
 
   const completeJob = async () => {
     await API.post(links.completeJob, {
-      organisationGuid: config.ORG_GUID,
+      organisationGuid,
       serviceCenterId,
       workplaceId,
       jobGuid: customer.jobGuid,
     }).then((res) => {
       setCustomer(initialCustomerState);
       getWorkplaceState();
+      stopTimer();
+      setActiveTab(0);
     });
   };
 
@@ -138,7 +142,7 @@ export default function Dashboard({ history }) {
     if (customer.receiptNumber) {
       await API.delete(links.deleteClient, {
         data: {
-          organisationGuid: config.ORG_GUID,
+          organisationGuid,
           serviceCenterId,
           workplaceId,
           jobGuid: customer.jobGuid,
@@ -155,7 +159,6 @@ export default function Dashboard({ history }) {
     setLoading(true);
     await API.get(`${links.getWorkplaceState}?${apiQueryParams}`).then((res) => {
       const state = res.data.data.workplaceState;
-      console.log(state);
       setWorkplaceState(state);
     });
     setLoading(false);
@@ -163,7 +166,7 @@ export default function Dashboard({ history }) {
 
   const suspendJob = async () => {
     await API.post(links.suspendJob, {
-      organisationGuid: config.ORG_GUID,
+      organisationGuid,
       serviceCenterId,
       workplaceId,
       jobGuid: customer.jobGuid,
@@ -176,12 +179,12 @@ export default function Dashboard({ history }) {
 
   const suspendJobForTime = async () => {
     await API.post(links.suspendJobForTime, {
-      organisationGuid: config.ORG_GUID,
+      organisationGuid,
       serviceCenterId,
       workplaceId,
       jobGuid: customer.jobGuid,
       comment: '',
-      suspendTime: parseHoursAndMinutesToMs(delayHours, delayMinutes),
+      suspendTime: parseHoursAndMinutesToSeconds(delayHours, delayMinutes),
     }).then((res) => {
       getWorkplaceState();
       resetDelayValues();
@@ -191,7 +194,6 @@ export default function Dashboard({ history }) {
 
   const getSuspendedJobs = async () => {
     await API.get(`${links.getSuspendedJobs}?${apiQueryParams}`).then((res) => {
-      console.log('sus jobs ==>', res.data.data);
       setSuspendedJobs(res.data.data);
     });
   };
@@ -201,7 +203,7 @@ export default function Dashboard({ history }) {
     if (jobGuid) {
       await API.post(links.resumeSuspendedJob, {
         jobGuid,
-        organisationGuid: config.ORG_GUID,
+        organisationGuid,
         workplaceId,
         serviceCenterId,
       }).then(() => {
@@ -227,7 +229,7 @@ export default function Dashboard({ history }) {
   const handleRedirectToEmployee = async (e) => {
     const employeeId = e.target.dataset.id;
     await API.post(links.redirectToEmlployee, {
-      organisationGuid: config.ORG_GUID,
+      organisationGuid,
       serviceCenterId,
       workplaceId,
       jobGuid: customer.jobGuid,
@@ -247,14 +249,15 @@ export default function Dashboard({ history }) {
 
   const handleRedirectToWorkplace = async (e) => {
     const newWorkplaceId = e.target.dataset.id;
+
     await API.post(links.redirectToWorkplace, {
-      organisationGuid: config.ORG_GUID,
+      organisationGuid,
       serviceCenterId,
       workplaceId,
       jobGuid: customer.jobGuid,
       comment: '',
       needComeBack: true,
-      newWorkplaceId,
+      newWorkplaceId: parseInt(newWorkplaceId),
     }).then((res) => {
       resetTicket();
     });
@@ -262,7 +265,7 @@ export default function Dashboard({ history }) {
 
   const resetTicket = () => {
     setCustomer(initialCustomerState);
-    setTicketTime(0);
+    dispatch(setTicketTime(0));
     getWorkplaceState();
     setActiveTab(0);
   };
@@ -270,8 +273,8 @@ export default function Dashboard({ history }) {
   useEffect(() => {
     getWorkplaceState();
     getQueueState();
-    const interval = setInterval(getQueueState, 1000 * 10);
 
+    const interval = setInterval(getQueueState, 1000 * 10);
     return () => {
       clearInterval(interval);
     };
@@ -285,8 +288,6 @@ export default function Dashboard({ history }) {
 
     if (workplaceState === operatorStatuses.TICKET_IN_PROGRESS) {
       startTimer();
-    } else {
-      stopTimer();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workplaceState]);
@@ -313,22 +314,26 @@ export default function Dashboard({ history }) {
       interval = setInterval(() => {
         const now = moment();
         const elapsed = now.diff(startTime);
-        setTicketTime(elapsed);
-      }, 100);
+        dispatch(setTicketTime(elapsed));
+      }, 1000);
     } else {
       clearInterval(interval);
     }
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTime]);
 
   const startTimer = () => {
-    setStartTime(moment());
+    const startTime = ticketTime
+      ? moment().add(-ticketTime, 'milliseconds')
+      : moment();
+    setStartTime(startTime);
   };
 
   const stopTimer = () => {
     setStartTime(null);
-    setTicketTime(0);
+    dispatch(setTicketTime(0));
   };
 
   const callButtonDisabled =

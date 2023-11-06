@@ -5,7 +5,6 @@ export default function PostponedJobsTab({
   postponedTicketList = [],
   handlePostponedTicketClick,
 }) {
-  console.log(postponedTicketList);
   return (
     <div>
       <div className={`tab-content  ${active ? 'active' : ''}`}>
@@ -14,10 +13,12 @@ export default function PostponedJobsTab({
             <p>Список порожній</p>
           ) : (
             postponedTicketList.map((job, index) => {
+              const text = `Квиток №${job.receiptNumber}/ ${job.serviceName}`;
               return (
                 <li key={index}>
                   <p style={{ paddingTop: 8 }}>
                     <span
+                      title={text}
                       style={{
                         overflow: 'hidden',
                         whiteSpace: 'nowrap',
@@ -25,7 +26,7 @@ export default function PostponedJobsTab({
                         marginRight: '3px',
                       }}
                     >
-                      Квиток №{job.receiptNumber}/ {job.serviceName}
+                      {text}
                     </span>
                   </p>
                   <button

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import BackgroundPage from '../../Components/BackgroundPage';
-import logoBlack from '../../img/logo-black.svg';
+import logo from '../../img/sinevo-logo.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, setError } from '../../redux/auth/authSlice';
 import { routes } from '../../api/routes';
@@ -23,7 +23,7 @@ function Error(props) {
             <div className="pop-up" id="add">
               <div className="pop-up-top">
                 <strong>Помилка {props?.location?.state?.requestId} !</strong>
-                <img src={logoBlack} alt="logo" />
+                <img src={logo} width={75} alt="logo" />
               </div>
               <div className="form">
                 <p style={{ marginBottom: 20 }}>

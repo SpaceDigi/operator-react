@@ -5,7 +5,6 @@ import logo from '../../img/sinevo-logo.svg';
 import SelectDropdown from '../../Components/CustomComponents/SelectDropdown';
 import links from '../../api/links';
 import { useSelector } from 'react-redux';
-import { config } from '../../config';
 import { routes } from '../../api/routes';
 
 export default function CreateClient(props) {
@@ -25,8 +24,9 @@ export default function CreateClient(props) {
 
   const serviceCenterId = useSelector((state) => state.serviceCenter.id);
   const workplaceId = useSelector((state) => state.workplace.id);
+  const organisationGuid = useSelector((state) => state.orgGuid);
 
-  const apiQueryParams = `organisationGuid=${config.ORG_GUID}&serviceCenterId=${serviceCenterId}&workplaceId=${workplaceId}`;
+  const apiQueryParams = `organisationGuid=${organisationGuid}&serviceCenterId=${serviceCenterId}&workplaceId=${workplaceId}`;
 
   const getCustomerTypes = async () => {
     await API.get(`${links.getCustomerTypes}?${apiQueryParams}`).then((res) => {
@@ -78,7 +78,7 @@ export default function CreateClient(props) {
     event.preventDefault();
     setLoading(true);
     await API.put(links.createClient, {
-      organisationGuid: config.ORG_GUID,
+      organisationGuid,
       workplaceId,
       serviceCenterId,
       customerTypeId: selectedCustomerType.id,
