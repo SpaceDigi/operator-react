@@ -1,6 +1,6 @@
-import React from "react";
-import "../../styles/styles.css";
-import logo from  "../../img/logo.svg";
+import React from 'react';
+import '../../styles/styles.css';
+import logo from '../../img/logo.svg';
 
 function BackgroundPage() {
   return (
@@ -28,17 +28,17 @@ function BackgroundPage() {
           <div className="container">
             <p className="client-info">
               <span>Назва послуги</span>
-              <strong>Операції із рахунком</strong>
+              <strong>-</strong>
             </p>
 
             <div className="header-bottom__twice">
               <p className="client-info">
                 <span>Номер квитка</span>
-                <strong className="ico ico-ticket">1453778</strong>
+                <strong className="ico ico-ticket">-</strong>
               </p>
               <p className="client-info">
                 <span>Час</span>
-                <strong className="ico ico-clock">00:01</strong>
+                <strong className="ico ico-clock">00:00:00</strong>
               </p>
             </div>
           </div>
@@ -55,7 +55,7 @@ function BackgroundPage() {
                     <strong>Викликати</strong>
                     НАТИСНІТЬ ЩОБ ПОЧАТИ
                   </a>
-                  <a href="/"className="btn btn-play">
+                  <a href="/" className="btn btn-play">
                     <strong>Почати</strong>
                     ПОЧАТИ ЗАПИС
                   </a>
@@ -75,7 +75,7 @@ function BackgroundPage() {
 
               <div className="row-order">
                 <div className="col-1-2">
-                  <div className="box">
+                  {/* <div className="box">
                     <div className="box-title">
                       <strong>Деталі</strong>
                     </div>
@@ -138,7 +138,7 @@ function BackgroundPage() {
                         />
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="col-1-2 inverse">
                   <div className="row-buttons">
@@ -182,81 +182,6 @@ function BackgroundPage() {
                   <li>Відкладені</li>
                 </ul>
 
-                <div className="tab-content">#Задачі</div>
-                <div className="tab-content active">
-                  <ul className="spec-list">
-                    <li>
-                      <p>
-                        Іван Іванов
-                        <span>Workplace</span>
-                      </p>
-                      <button className="arr arr-right"></button>
-                    </li>
-                    <li>
-                      <p>
-                        Сергій Сергієнко
-                        <span>Workplace</span>
-                      </p>
-                      <button className="arr arr-right"></button>
-                    </li>
-                    <li>
-                      <p>
-                        Наталія Дмитренко
-                        <span>Workplace</span>
-                      </p>
-                      <button className="arr arr-right"></button>
-                    </li>
-                    <li>
-                      <p>
-                        Анатолій Куц
-                        <span>Workplace</span>
-                      </p>
-                      <button className="arr arr-right"></button>
-                    </li>
-                    <li>
-                      <p>
-                        Іван Іванов
-                        <span>Workplace</span>
-                      </p>
-                      <button className="arr arr-right"></button>
-                    </li>
-                    <li>
-                      <p>
-                        Сергій Сергієнко
-                        <span>Workplace</span>
-                      </p>
-                      <button className="arr arr-right"></button>
-                    </li>
-                    <li>
-                      <p>
-                        Наталія Дмитренко
-                        <span>Workplace</span>
-                      </p>
-                      <button className="arr arr-right"></button>
-                    </li>
-                    <li>
-                      <p>
-                        Анатолій Куц
-                        <span>Workplace</span>
-                      </p>
-                      <button className="arr arr-right"></button>
-                    </li>
-                    <li>
-                      <p>
-                        Сергій Сергієнко
-                        <span>Workplace</span>
-                      </p>
-                      <button className="arr arr-right"></button>
-                    </li>
-                    <li>
-                      <p>
-                        Наталія Дмитренко
-                        <span>Workplace</span>
-                      </p>
-                      <button className="arr arr-right"></button>
-                    </li>
-                  </ul>
-                </div>
                 <div className="tab-content">#Відкладені</div>
               </div>
             </div>
@@ -267,8 +192,7 @@ function BackgroundPage() {
       <footer>
         <div className="container">
           <p>
-            © 2020 QMate Dashboard by Servus Systems Integration. All rights
-            reserved
+            © 2020 QMate Dashboard by Servus Systems Integration. All rights reserved
           </p>
         </div>
       </footer>
