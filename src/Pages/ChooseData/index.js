@@ -40,7 +40,9 @@ export default function ChooseData(props) {
       props.history.push(routes.dashboard);
     }
 
-    loadBranchList();
+    if (USER_ID) {
+      loadBranchList();
+    }
     return () => {
       document.body.className = document.body.className.replace('fix', '');
     };
@@ -90,7 +92,6 @@ export default function ChooseData(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(workplace);
     setLoading(true);
     API.post(links.login, {
       organisationGuid: config.ORG_GUID,
@@ -99,7 +100,6 @@ export default function ChooseData(props) {
       userLogin,
       userPassword,
     }).then((res) => {
-      console.log(res.data);
       dispatch(setUserData(res.data.data));
       dispatch(
         setSelectedWorkplace({

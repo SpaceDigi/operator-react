@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API from '../../api/API';
-import logoBlack from '../../img/logo-black.svg';
+import logo from '../../img/sinevo-logo.svg';
 import BackgroundPage from '../../Components/BackgroundPage';
 import links from '../../api/links';
 import { useDispatch, useSelector } from 'react-redux';
@@ -57,7 +57,7 @@ export default function Login(props) {
             <div className="pop-up" id="auth">
               <div className="pop-up-top">
                 <strong>Вхід в систему</strong>
-                <img src={logoBlack} alt="logo" />
+                <img src={logo} width={75} alt="logo" />
               </div>
               <form onSubmit={(event) => handleSubmit(event)} className="form">
                 <p className="form-title">ВВЕДІТЬ ВАШІ ДАНІ</p>
