@@ -73,11 +73,9 @@ export default function Login(props) {
         `${config.API_URL}${links.getOrgGuidByName}?OrganisationName=${value}`
       )
         .then((res) => {
-          console.log('org name', res.data);
           setOrgGuid(res.data.data.organisationGuid);
         })
         .catch((err) => {
-          console.log(err);
           setOrgGuid('');
         });
     } else {

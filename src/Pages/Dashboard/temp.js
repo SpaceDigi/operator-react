@@ -76,7 +76,6 @@ class Dashboard extends React.Component {
         }
       )
         .then((res) => {
-          console.log(res.data);
           this.setState({
             commonTicketListSize: res.data.commonTicketListSize,
             directTicketListSize: res.data.directTicketListSize,
@@ -125,7 +124,6 @@ class Dashboard extends React.Component {
         this.setState({ ticketList: res.data.ticketList, loading: false });
       })
       .catch((error) => {
-        console.log(error.response);
         this.props.history.push({
           pathname: '/error',
           state: {
@@ -208,7 +206,6 @@ class Dashboard extends React.Component {
       }
     )
       .then((res) => {
-        // console.log(res.data);
         this.setState({
           operatorStatus: res.data.operatorStatus,
           loading: false,
@@ -348,7 +345,6 @@ class Dashboard extends React.Component {
         this.setState({ soundRecordStatus: false });
       })
       .catch((error) => {
-        console.log(error);
         this.setState({ soundRecordStatus: true });
       });
   }
@@ -369,7 +365,6 @@ class Dashboard extends React.Component {
         }
       )
         .then((res) => {
-          console.log(res.data);
           const soundRecord = res?.data?.soundRecord;
 
           if (soundRecord) {

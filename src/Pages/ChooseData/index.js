@@ -55,7 +55,6 @@ export default function ChooseData(props) {
       `${links.branchList}?EmployeeId=${USER_ID}&OrganisationGuid=${organisationGuid}`
     ).then((res) => {
       setDepartmentsList(res.data.data);
-      console.log(res.data.data);
 
       if (department.length === 1) {
         const department = res.data.data[0];
@@ -69,7 +68,6 @@ export default function ChooseData(props) {
     API.get(
       `${links.workplaceList}?OrganisationGuid=${organisationGuid}&ServiceCenterId=${branchId}`
     ).then((res) => {
-      console.log(res.data);
       setWorkplaceList(res.data.data);
 
       if (res.data.data.length === 1) {
@@ -82,7 +80,6 @@ export default function ChooseData(props) {
   };
 
   const setBranch = (e) => {
-    console.log(e);
     setDepartment(e);
     loadWorkplaceList(e.serviceCenterId);
   };

@@ -77,13 +77,6 @@ export default function Dashboard({ history }) {
     });
   };
 
-  // const getJobs = async () => {
-  //   await API.get(`${links.getJobs}?${apiQueryParams}`).then((res) => {
-  //     console.log('jobs', res.data);
-  //     setJobs(res.data.data);
-  //   });
-  // };
-
   const toggleDelayDropdown = () => {
     setDelayDropdownOpened((prev) => !prev);
   };

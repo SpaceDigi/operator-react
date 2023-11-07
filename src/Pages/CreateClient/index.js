@@ -30,21 +30,18 @@ export default function CreateClient(props) {
 
   const getCustomerTypes = async () => {
     await API.get(`${links.getCustomerTypes}?${apiQueryParams}`).then((res) => {
-      console.log('customerTypes ==>', res.data.data);
       setCustomerTypes(res.data.data);
     });
   };
 
   const getLanguages = async () => {
     await API.get(`${links.getLanguages}?${apiQueryParams}`).then((res) => {
-      console.log('languages ==>', res.data.data);
       setLanguages(res.data.data);
     });
   };
 
   const getServices = async () => {
     await API.get(`${links.getJobs}?${apiQueryParams}`).then((res) => {
-      console.log('services ==>', res.data.data);
       setServices(res.data.data);
     });
   };

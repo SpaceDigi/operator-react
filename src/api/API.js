@@ -28,7 +28,7 @@ API.interceptors.response.use(
 
 const errorHandler = (error, props) => {
   const errorData = error.response?.data?.error || null;
-  console.log(error.response.data.error);
+
   store.dispatch(setError(errorData));
 
   window.location = routes.error;
@@ -47,7 +47,6 @@ const successHandler = (response) => {
 };
 
 const requestHandler = (request) => {
-  // console.log(request)
   return request;
 };
 
