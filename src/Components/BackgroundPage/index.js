@@ -1,6 +1,6 @@
 import React from 'react';
 import '../../styles/styles.css';
-import logo from '../../img/logo.svg';
+import { ReactComponent as Logo } from '../../img/sinevo-logo.svg';
 
 function BackgroundPage() {
   return (
@@ -9,14 +9,31 @@ function BackgroundPage() {
         <div className="header-top">
           <div className="container">
             <a href="/" className="logo">
-              <img src={logo} alt="loho" />
+              <a
+                href="/"
+                className="logo"
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  fontStyle: 'italic',
+                  color: 'white',
+                }}
+              >
+                <Logo
+                  fill="#FFFFFF"
+                  style={{
+                    marginTop: '5px',
+                    height: '25px',
+                  }}
+                />
+              </a>
             </a>
 
             <div className="header-top__right">
               <div className="header-top__stat">
-                <span className="ico ico-users">122</span>
-                <span className="ico ico-pause">13</span>
-                <span className="ico ico-fire">3</span>
+                <span className="ico ico-users">0</span>
+                <span className="ico ico-pause">0</span>
+                <span className="ico ico-fire">0</span>
               </div>
               <div className="header-top__work">
                 Відділення / <strong>Місце</strong>
