@@ -92,12 +92,11 @@ export default function Dashboard({ history }) {
     await API.get(`${links.callCustomer}?${apiQueryParams}`).then((res) => {
       if (res.data.data.receiptNumber) {
         setCustomer(res.data.data);
-        ticketTime && startJob({ jobGuid: res.data.data.jobGuid });
       } else {
         setCustomer(initialCustomerState);
         setTicketTime(0);
       }
-      getWorkplaceState();
+      ticketTime && setWorkplaceState(operatorStatuses.TICKET_IN_PROGRESS);
     });
     setLoading(false);
   };
@@ -110,11 +109,16 @@ export default function Dashboard({ history }) {
       workplaceId,
       jobGuid: customer.jobGuid || jobGuid,
     }).then((res) => {
-      //temp solution
-
       setWorkplaceState(operatorStatuses.TICKET_IN_PROGRESS);
     });
     setLoading(false);
+  };
+
+  const resetWorkplace = () => {
+    setCustomer(initialCustomerState);
+    getWorkplaceState();
+    stopTimer();
+    setActiveTab(0);
   };
 
   const completeJob = async () => {
@@ -124,10 +128,7 @@ export default function Dashboard({ history }) {
       workplaceId,
       jobGuid: customer.jobGuid,
     }).then((res) => {
-      setCustomer(initialCustomerState);
-      getWorkplaceState();
-      stopTimer();
-      setActiveTab(0);
+      resetWorkplace();
     });
   };
 
@@ -142,8 +143,7 @@ export default function Dashboard({ history }) {
           comment: '123',
         },
       }).then(() => {
-        getWorkplaceState();
-        setCustomer(initialCustomerState);
+        resetWorkplace();
       });
     }
   };
@@ -165,8 +165,7 @@ export default function Dashboard({ history }) {
       jobGuid: customer.jobGuid,
       comment: '',
     }).then((res) => {
-      getWorkplaceState();
-      setCustomer(initialCustomerState);
+      resetWorkplace();
     });
   };
 
@@ -179,9 +178,8 @@ export default function Dashboard({ history }) {
       comment: '',
       suspendTime: parseHoursAndMinutesToSeconds(delayHours, delayMinutes),
     }).then((res) => {
-      getWorkplaceState();
+      resetWorkplace();
       resetDelayValues();
-      setCustomer(initialCustomerState);
     });
   };
 
@@ -192,6 +190,7 @@ export default function Dashboard({ history }) {
   };
 
   const handleSuspendedJobClick = async (e) => {
+    setLoading(true);
     const jobGuid = e.currentTarget.dataset.id;
     if (jobGuid) {
       await API.post(links.resumeSuspendedJob, {
@@ -200,8 +199,7 @@ export default function Dashboard({ history }) {
         workplaceId,
         serviceCenterId,
       }).then(() => {
-        callClient();
-        setSuspendedJobs([]);
+        getWorkplaceState();
         setActiveTab(0);
       });
     }
@@ -278,7 +276,6 @@ export default function Dashboard({ history }) {
     if (workplaceState === operatorStatuses.TICKET_IS_CALLED) {
       callClient();
     }
-
     if (workplaceState === operatorStatuses.TICKET_IN_PROGRESS) {
       startTimer();
     }
