@@ -43,7 +43,7 @@ function SelectDropdown(props) {
         ref={ref}
         style={props.width ? { width: props.width } : null}
         disabled={disabled}
-        onChange={props.setVal}
+        onChange={() => {}}
         required={required}
         autoFocus={props.focus ? props.focus : false}
         placeholder={props.placeholder ? props.placeholder : null}

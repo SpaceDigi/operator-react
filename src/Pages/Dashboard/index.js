@@ -57,6 +57,7 @@ export default function Dashboard({ history }) {
   const [suspendedJobs, setSuspendedJobs] = useState([]);
   const [employeesToRedirect, setEmployeesToRedirect] = useState([]);
   const [workplacesToRedirect, setWorplacesToRedirect] = useState([]);
+  const [tabLoading, setTabLoading] = useState(false);
 
   const dispatch = useDispatch();
   const serviceCenterId = useSelector((state) => state.serviceCenter.id);
@@ -96,7 +97,13 @@ export default function Dashboard({ history }) {
         setCustomer(initialCustomerState);
         setTicketTime(0);
       }
-      ticketTime && setWorkplaceState(operatorStatuses.TICKET_IN_PROGRESS);
+      if (ticketTime) {
+        setWorkplaceState(operatorStatuses.TICKET_IN_PROGRESS);
+      }
+
+      if (!ticketTime && workplaceState !== operatorStatuses.TICKET_IS_CALLED) {
+        setWorkplaceState(operatorStatuses.TICKET_IS_CALLED);
+      }
     });
     setLoading(false);
   };
@@ -184,9 +191,11 @@ export default function Dashboard({ history }) {
   };
 
   const getSuspendedJobs = async () => {
+    setTabLoading(true);
     await API.get(`${links.getSuspendedJobs}?${apiQueryParams}`).then((res) => {
       setSuspendedJobs(res.data.data);
     });
+    setTabLoading(false);
   };
 
   const handleSuspendedJobClick = async (e) => {
@@ -212,9 +221,11 @@ export default function Dashboard({ history }) {
   };
 
   const getEmployeesToRedirect = async () => {
+    setTabLoading(true);
     await API.get(`${links.getEmployees}?${apiQueryParams}`).then((res) => {
       setEmployeesToRedirect(res.data.data);
     });
+    setTabLoading(false);
   };
 
   const handleRedirectToEmployee = async (e) => {
@@ -233,9 +244,11 @@ export default function Dashboard({ history }) {
   };
 
   const getWorkplacesToRedirect = async () => {
+    setTabLoading(true);
     await API.get(`${links.getWorkplaces}?${apiQueryParams}`).then((res) => {
       setWorplacesToRedirect(res.data.data);
     });
+    setTabLoading(false);
   };
 
   const handleRedirectToWorkplace = async (e) => {
@@ -273,7 +286,7 @@ export default function Dashboard({ history }) {
   }, []);
 
   useEffect(() => {
-    if (workplaceState === operatorStatuses.TICKET_IS_CALLED) {
+    if (workplaceState === operatorStatuses.TICKET_IS_CALLED && !customer.jobGuid) {
       callClient();
     }
     if (workplaceState === operatorStatuses.TICKET_IN_PROGRESS) {
@@ -418,16 +431,19 @@ export default function Dashboard({ history }) {
                   workplaceState={workplaceState}
                 />
                 <PostponedJobsTab
+                  loading={tabLoading}
                   active={activeTab === tabsValues.POSTPONED}
                   postponedTicketList={suspendedJobs}
                   handlePostponedTicketClick={handleSuspendedJobClick}
                 />
                 <RedirectToEmployeeTab
+                  loading={tabLoading}
                   active={activeTab === tabsValues.REDIRECT_TO_EMPLOYEE}
                   employeeList={employeesToRedirect}
                   handleRedirectToEmployeeClick={handleRedirectToEmployee}
                 />
                 <RedirectToWorkplaceTab
+                  loading={tabLoading}
                   workplaceList={workplacesToRedirect}
                   active={activeTab === tabsValues.REDIRECT_TO_WORKPLACE}
                   handleRedirectToWorkplaceClick={handleRedirectToWorkplace}
