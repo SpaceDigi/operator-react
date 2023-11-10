@@ -212,6 +212,7 @@ export default function Dashboard({ history }) {
     getWorkplaceState();
     stopTimer();
     setActiveTab(0);
+    getQueueState();
   };
 
   const resetDelayValues = () => {
