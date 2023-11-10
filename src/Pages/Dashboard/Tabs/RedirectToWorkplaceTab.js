@@ -13,39 +13,37 @@ export default function RedirectToWorkplaceTab({
   );
 
   return (
-    !loading && (
-      <div>
-        <div className={`tab-content  ${active ? 'active' : ''}`}>
-          <ul className="tab-list">
-            {!filteredWorkplaceList.length ? (
-              <p>Список порожній</p>
-            ) : (
-              filteredWorkplaceList.map((item, index) => {
-                return (
-                  <li key={item.workPlaceId} className="task-orange">
-                    <span
-                      title={item.description}
-                      style={{
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                      }}
-                    >
-                      {item.description}
-                    </span>
+    <div>
+      <div className={`tab-content  ${active ? 'active' : ''}`}>
+        <ul className="tab-list">
+          {!filteredWorkplaceList.length ? (
+            <p>{!loading ? 'Список порожній' : ''}</p>
+          ) : (
+            filteredWorkplaceList.map((item, index) => {
+              return (
+                <li key={item.workPlaceId} className="task-orange">
+                  <span
+                    title={item.description}
+                    style={{
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {item.description}
+                  </span>
 
-                    <button
-                      data-id={item.workPlaceId}
-                      onClick={handleRedirectToWorkplaceClick}
-                      className="arr arr-right"
-                    ></button>
-                  </li>
-                );
-              })
-            )}
-          </ul>
-        </div>
+                  <button
+                    data-id={item.workPlaceId}
+                    onClick={handleRedirectToWorkplaceClick}
+                    className="arr arr-right"
+                  ></button>
+                </li>
+              );
+            })
+          )}
+        </ul>
       </div>
-    )
+    </div>
   );
 }

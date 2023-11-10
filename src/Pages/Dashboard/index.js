@@ -121,13 +121,6 @@ export default function Dashboard({ history }) {
     setLoading(false);
   };
 
-  const resetWorkplace = () => {
-    setCustomer(initialCustomerState);
-    getWorkplaceState();
-    stopTimer();
-    setActiveTab(0);
-  };
-
   const completeJob = async () => {
     await API.post(links.completeJob, {
       organisationGuid,
@@ -214,6 +207,13 @@ export default function Dashboard({ history }) {
     }
   };
 
+  const resetWorkplace = () => {
+    setCustomer(initialCustomerState);
+    getWorkplaceState();
+    stopTimer();
+    setActiveTab(0);
+  };
+
   const resetDelayValues = () => {
     setDelayHours(0);
     setDelayMinutes(0);
@@ -239,7 +239,7 @@ export default function Dashboard({ history }) {
       needComeBack: true,
       employeeId,
     }).then((res) => {
-      resetTicket();
+      resetWorkplace();
     });
   };
 
@@ -263,15 +263,8 @@ export default function Dashboard({ history }) {
       needComeBack: true,
       newWorkplaceId: parseInt(newWorkplaceId),
     }).then((res) => {
-      resetTicket();
+      resetWorkplace();
     });
-  };
-
-  const resetTicket = () => {
-    setCustomer(initialCustomerState);
-    dispatch(setTicketTime(0));
-    getWorkplaceState();
-    setActiveTab(0);
   };
 
   useEffect(() => {

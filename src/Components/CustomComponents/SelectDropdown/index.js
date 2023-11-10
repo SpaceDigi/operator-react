@@ -18,6 +18,10 @@ function SelectDropdown(props) {
     if (props.required !== undefined && props.required !== null) {
       setRequired(props.required);
     }
+
+    if (props.disabled) {
+      setDropdown(false);
+    }
   }, [props.disabled, props.required]);
 
   useOutsideClick(ref, () => {
@@ -28,7 +32,9 @@ function SelectDropdown(props) {
 
   return (
     <div
-      style={props.margin ? { margin: props.margin } : null}
+      style={{
+        display: 'flex',
+      }}
       onClick={!disabled ? () => setDropdown(!dropdown) : null}
       onChange={!disabled ? () => setDropdown(!dropdown) : null}
       className={'input_component dropdown_component_wrapper'}
@@ -39,19 +45,22 @@ function SelectDropdown(props) {
           {props.title.title}{' '}
         </span>
       ) : null}
-      <input
-        ref={ref}
-        style={props.width ? { width: props.width } : null}
-        disabled={disabled}
-        onChange={() => {}}
-        required={required}
-        autoFocus={props.focus ? props.focus : false}
-        placeholder={props.placeholder ? props.placeholder : null}
-        className={props.error ? 'input' : 'input'}
-        type={props.type ? props.type : 'text'}
-        value={props.value ? props.value[descriptionKey] : ''}
-      />
-      <span className="arr arr-down"></span>
+      <button
+        type="button"
+        className="input"
+        style={{
+          cursor: disabled ? 'not-allowed' : 'pointer',
+          width: '100%',
+          outline: 'none',
+          height: '100%',
+          backgroundColor: disabled ? '' : 'transparent',
+          textAlign: 'start',
+          paddingRight: '50px',
+        }}
+      >
+        <span>{props.value ? props.value[descriptionKey] : ''}</span>
+        <span className="arr arr-down"></span>
+      </button>
       {dropdown ? (
         <div
           style={
