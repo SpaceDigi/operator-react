@@ -23,6 +23,7 @@ export default function Login(props) {
 
   const dispatch = useDispatch();
   const USER_ID = useSelector((state) => state.USER_ID);
+
   const serviceCenterId = useSelector((state) => state.serviceCenter.id);
   const workplaceId = useSelector((state) => state.workplace.id);
   const prevOrgName = useSelector((state) => state.orgName);
@@ -50,7 +51,7 @@ export default function Login(props) {
       return;
     }
     await API.post(links.getEmployeeInfo, {
-      organisationGuid: config.ORG_GUID,
+      organisationGuid: orgGuid,
       userLogin: login,
       userPassword: password,
     }).then((res) => {
