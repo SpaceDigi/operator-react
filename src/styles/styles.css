@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400&display=swap');
 
+:root {
+  --primary: #4267b2;
+  --dark-blue: #012031;
+  --accent: #fff;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -41,7 +47,7 @@ a {
 /* header */
 header {
   color: #fff;
-  background: #00334e;
+  background: var(--primary);
 }
 
 .logo img {
@@ -52,7 +58,7 @@ header {
 .header-top {
   padding: 30px 0;
   margin: 0 0 70px;
-  border-bottom: 1px solid #145374;
+  border-bottom: 1px solid var(--accent);
 }
 
 .header-top .container {
@@ -74,7 +80,7 @@ header {
   margin-left: 20px;
   color: #fff;
   padding: 9px 20px;
-  background: #00283d;
+  background: var(--primary);
   border: 0;
   border-radius: 6px;
   font-size: 14px;
@@ -82,7 +88,7 @@ header {
 }
 .button__logout:hover {
   cursor: pointer;
-  background: #00334e;
+  background: var(--dark-blue);
 }
 
 .header-top__work {
@@ -99,7 +105,7 @@ header {
   top: -8px;
   width: 4px;
   height: 36px;
-  background: #9b51e0;
+  background: var(--accent);
   border-radius: 6px;
 }
 
@@ -116,7 +122,7 @@ header {
   top: -8px;
   width: 4px;
   height: 36px;
-  background: #9b51e0;
+  background: var(--accent);
   border-radius: 6px;
 }
 
@@ -188,7 +194,7 @@ main {
   position: relative;
   display: block;
   padding: 25px;
-  background: #00334e;
+  background: var(--primary);
   border-radius: 6px;
   color: #fff;
   margin-bottom: 30px;
@@ -291,7 +297,7 @@ main {
 }
 
 .btn-off {
-  background: #00334e;
+  background: var(--primary);
   cursor: pointer;
 }
 
@@ -423,7 +429,7 @@ main {
   height: 40px;
   border: 0;
   border-radius: 6px;
-  background-color: #00334e;
+  background-color: var(--primary);
   box-shadow: 0px 4px 8px rgba(0, 40, 61, 0.32);
   cursor: pointer;
 }
@@ -684,7 +690,7 @@ body.fix footer {
 .button {
   color: #fff;
   padding: 10px 20px;
-  background: #00283d;
+  background: var(--primary);
   border: 0;
   border-radius: 6px;
   font-size: 14px;
@@ -692,7 +698,7 @@ body.fix footer {
 }
 .button:hover {
   cursor: pointer;
-  background: #00334e;
+  background: var(--dark-blue);
 }
 .cancel-button {
   color: #333;

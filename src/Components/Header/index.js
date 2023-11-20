@@ -38,7 +38,7 @@ export default function Header({
               fill="#FFFFFF"
               style={{
                 marginTop: '5px',
-                height: '25px',
+                height: '33px',
               }}
             />
           </a>
